@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@import "react-day-picker/style.css";
+
+@theme {
+  --color-brand-forest: #14532d;
+  --color-brand-forest-dark: #052e16;
+  --color-brand-green: #15803d;
+  --color-brand-green-light: #22c55e;
+  --color-brand-accent: #ea580c;
+  --color-brand-sun: #fbbf24;
+  --color-brand-cream: #faf7f2;
+  --color-brand-sand: #ede4d4;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+}
+
+/* Calendario de reserva — keep .rdp-root (use className, not classNames.root) */
+.campo-libre-calendar.rdp-root {
+  --rdp-accent-color: #15803d;
+  --rdp-accent-background-color: #dcfce7;
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-day_button-height: 38px;
+  --rdp-day_button-width: 38px;
+  font-size: 0.875rem;
+  color: #1a1a1a;
+}
+
+/* Tailwind preflight can break table layout; restore it */
+.campo-libre-calendar .rdp-month_grid {
+  display: table;
+  width: 100%;
+}
+
+.campo-libre-calendar .rdp-weekdays,
+.campo-libre-calendar .rdp-week {
+  display: table-row;
+}
+
+.campo-libre-calendar .rdp-weekday,
+.campo-libre-calendar .rdp-day {
+  display: table-cell;
+  vertical-align: middle;
+  color: #1a1a1a;
+}
+
+.campo-libre-calendar .rdp-day_button {
+  color: #1a1a1a;
+}
+
+.campo-libre-calendar .rdp-outside .rdp-day_button {
+  color: #9ca3af;
+}
+
+.campo-libre-calendar .rdp-disabled .rdp-day_button {
+  color: #d1d5db;
+}
