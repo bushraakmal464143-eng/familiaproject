@@ -29,6 +29,11 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.local.example
+
+# runtime data and uploads
+/data/
+/public/uploads/
 
 # typescript
 *.tsbuildinfo

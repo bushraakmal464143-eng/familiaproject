@@ -5,14 +5,21 @@ import OfferCard from "@/components/OfferCard";
 import {
   filterOffers,
   offerTabs,
-  offers,
   type OfferCategory,
 } from "@/lib/offers";
+import type { OfferRecord } from "@/lib/types";
 
-export default function OffersSection() {
+type OffersSectionProps = {
+  initialOffers: OfferRecord[];
+};
+
+export default function OffersSection({ initialOffers }: OffersSectionProps) {
   const [activeTab, setActiveTab] = useState<OfferCategory | "all">("all");
 
-  const filtered = useMemo(() => filterOffers(activeTab), [activeTab]);
+  const filtered = useMemo(
+    () => filterOffers(initialOffers, activeTab),
+    [initialOffers, activeTab]
+  );
 
   const featured = filtered.find((o) => o.featured) ?? filtered[0];
   const rest = filtered.filter((o) => o.id !== featured?.id);
@@ -27,7 +34,7 @@ export default function OffersSection() {
             </h2>
             <p className="mt-1 text-gray-600">
               <span className="font-semibold text-brand-accent">
-                {offers.length} chollos
+                {initialOffers.length} chollos
               </span>{" "}
               disponibles · Hoy te recomendamos
             </p>

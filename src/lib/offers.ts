@@ -1,26 +1,9 @@
+import type { OfferRecord } from "@/lib/types";
+
 export type OfferCategory = "all" | "new" | "bestseller" | "coming";
 
-export type Offer = {
-  id: string;
-  title: string;
-  subtitle: string;
-  rating: number;
-  reviews: number;
-  location: string;
-  region: string;
-  mealPlan?: string;
-  highlights: string[];
-  description: string;
-  freeCancellation?: string;
-  travelDates: string;
-  priceFrom: number;
-  image: string;
-  badge?: string;
-  saves?: number;
-  countdown?: string;
-  category: OfferCategory;
-  featured?: boolean;
-};
+/** @deprecated Use OfferRecord from @/lib/types */
+export type Offer = OfferRecord;
 
 export const offerTabs: { id: OfferCategory | "all"; label: string }[] = [
   { id: "all", label: "Todos" },
@@ -29,7 +12,8 @@ export const offerTabs: { id: OfferCategory | "all"; label: string }[] = [
   { id: "coming", label: "Próximamente a la venta" },
 ];
 
-export const offers: Offer[] = [
+/** Seed data; migration in offers-store adds campingId and status */
+export const defaultOffers = [
   {
     id: "0",
     title: "Oferta especial en bungalow en Camping Vidrà",
@@ -150,7 +134,10 @@ export const offers: Offer[] = [
   },
 ];
 
-export function filterOffers(category: OfferCategory | "all"): Offer[] {
-  if (category === "all") return offers;
-  return offers.filter((o) => o.category === category);
+export function filterOffers(
+  offersList: OfferRecord[],
+  category: OfferCategory | "all"
+): OfferRecord[] {
+  if (category === "all") return offersList;
+  return offersList.filter((o) => o.category === category);
 }

@@ -8,22 +8,22 @@ export default function Logo({ variant = "dark", showText = true }: LogoProps) {
   const accentTone = variant === "light" ? "text-brand-sun" : "text-brand-accent";
 
   return (
-    <span className="inline-flex items-center">
+    <span className="inline-flex max-w-full items-center">
       {showText ? (
         <span
-          className={`text-[1.75rem] font-extrabold tracking-tight drop-shadow-sm sm:text-[1.95rem] ${textTone}`}
+          className={`text-base font-extrabold leading-tight tracking-tight sm:text-lg ${textTone}`}
         >
           <span className="italic">Ofertas</span>
           <span className={accentTone}>de</span>
           <span className="italic">Camping</span>
-          <span className={`ml-0.5 text-[1.05rem] align-top sm:text-[1.15rem] ${accentTone}`}>
+          <span className={`ml-0.5 text-[0.65rem] align-top sm:text-xs ${accentTone}`}>
             .com
           </span>
         </span>
       ) : (
         <span
           aria-hidden
-          className={`inline-flex h-11 w-11 items-center justify-center rounded-full border-2 text-base font-black ${
+          className={`inline-flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-black ${
             variant === "light"
               ? "border-white text-white"
               : "border-brand-green text-brand-forest"

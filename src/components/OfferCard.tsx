@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Offer } from "@/lib/offers";
+import type { OfferRecord } from "@/lib/types";
 
 type OfferCardProps = {
-  offer: Offer;
+  offer: OfferRecord;
   featured?: boolean;
 };
 
@@ -113,7 +113,11 @@ export default function OfferCard({ offer, featured = false }: OfferCardProps) {
           >
             Ver detalles →
           </Link>
-          <div className="shrink-0 rounded-lg bg-brand-accent px-4 py-2 text-right text-white">
+          <Link
+            href={`/ofertas/${offer.id}`}
+            className="shrink-0 rounded-lg bg-brand-accent px-4 py-2 text-right text-white transition hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2"
+            aria-label={`Contratar ${offer.title} desde ${offer.priceFrom} euros`}
+          >
             <p className="text-[10px] font-medium uppercase leading-none opacity-90">
               1 noche desde
             </p>
@@ -121,7 +125,10 @@ export default function OfferCard({ offer, featured = false }: OfferCardProps) {
               {offer.priceFrom} €
               <span className="text-sm font-semibold">/pers.</span>
             </p>
-          </div>
+            <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide">
+              Contratar
+            </p>
+          </Link>
         </div>
       </div>
     </article>

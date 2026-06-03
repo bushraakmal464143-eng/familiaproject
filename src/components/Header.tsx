@@ -39,10 +39,10 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/publicar"
+            href="/camping/login"
             className="hidden text-sm font-medium text-gray-600 hover:text-brand-accent sm:inline"
           >
-            Publica tu camping
+            Espacio campings
           </Link>
           <Link
             href="/cuenta"
@@ -80,11 +80,11 @@ export default function Header() {
           </Link>
         ))}
         <Link
-          href="/publicar"
+          href="/camping/login"
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-brand-accent sm:hidden"
           onClick={closeMenu}
         >
-          Publica tu camping
+          Espacio campings
         </Link>
       </nav>
     </header>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import OffersSection from "@/components/OffersSection";
 import SearchForm from "@/components/SearchForm";
+import { getPublicOffers } from "@/lib/offers-store";
 import { SITE_NAME } from "@/lib/site";
 
 const HERO_IMAGE =
@@ -23,11 +24,12 @@ const features = [
 
 const trustPoints = ["Confirmación al instante"];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const offers = await getPublicOffers();
+
   return (
     <>
-      {/* Hero con imagen de fondo */}
-      <section className="relative min-h-[520px] text-white">
+      <section className="relative min-h-[50vh] text-white">
         <div className="absolute inset-0 overflow-hidden">
           <Image
             src={HERO_IMAGE}
@@ -37,37 +39,19 @@ export default function HomePage() {
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-forest-dark/90 via-brand-forest/75 to-brand-forest-dark/50" />
+          <div className="absolute inset-0 bg-brand-forest-dark/55" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <p className="text-lg font-medium text-brand-sun sm:text-xl">
-            Vive la aventura al aire libre
-          </p>
-          <h1 className="mt-3 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-            Descubre campings, glamping y parques en toda España
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-green-100">
-            Encuentra tu parcela perfecta entre montañas, playas y bosques.
-            Reserva fácil con {SITE_NAME}.
-          </p>
-
-          <div className="mt-10 max-w-4xl rounded-xl bg-white/95 p-4 shadow-2xl backdrop-blur sm:p-6">
-            <SearchForm />
-            <div className="mt-4 flex flex-wrap gap-3 text-sm">
-              <Link
-                href="/mapa"
-                className="font-medium text-brand-green hover:underline"
-              >
-                Buscar en el mapa
-              </Link>
-              <span className="text-gray-300">|</span>
-              <Link
-                href="/ofertas"
-                className="font-medium text-brand-green hover:underline"
-              >
-                Ver ofertas de última hora
-              </Link>
+        <div className="relative mx-auto flex min-h-[50vh] max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+          <div className="w-full rounded-xl border border-white/20 bg-brand-forest/65 p-5 shadow-xl backdrop-blur-sm sm:p-7">
+            <h1 className="text-xl font-bold leading-tight sm:text-3xl">
+              Los mejores chollos de viaje por tiempo limitado
+            </h1>
+            <p className="mt-2 text-sm text-green-100">
+              Encuentra tu parcela perfecta en España con {SITE_NAME}.
+            </p>
+            <div className="mt-4 rounded-lg bg-white p-2 sm:p-3">
+              <SearchForm />
             </div>
           </div>
         </div>
@@ -89,7 +73,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <OffersSection />
+      <OffersSection initialOffers={offers} />
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold text-gray-900">Búsquedas populares</h2>
@@ -98,18 +82,15 @@ export default function HomePage() {
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {popularSearches.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-brand-accent hover:shadow-md"
+            <div
+              key={item.label}
+              className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
             >
               <span className="text-3xl" aria-hidden>
                 {item.icon}
               </span>
-              <span className="font-medium text-gray-800 group-hover:text-brand-accent">
-                {item.label}
-              </span>
-            </Link>
+              <span className="font-medium text-gray-800">{item.label}</span>
+            </div>
           ))}
         </div>
       </section>
@@ -141,8 +122,8 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold text-gray-900">Parques naturales</h2>
         <p className="mt-2 max-w-2xl text-gray-600">
-          Desde los Pirineos hasta Doñana: explora los espacios
-          protegidos de España y reserva tu estancia en plena naturaleza.
+          Desde los Pirineos hasta Doñana: explora los espacios protegidos de
+          España y reserva tu estancia en plena naturaleza.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           {[
@@ -168,12 +149,12 @@ export default function HomePage() {
               ¿Tienes un camping o glamping?
             </h2>
             <p className="mt-2 max-w-xl text-gray-600">
-              Únete a {SITE_NAME} y recibe más reservas con total control de
-              precios y disponibilidad. Publica tu establecimiento hoy mismo.
+              Únete ofertasdecamping.com y recibe más reservas con total control
+              de precios y disponibilidad. Publica tu establecimiento hoy mismo.
             </p>
           </div>
           <Link
-            href="/publicar"
+            href="/camping/registro"
             className="shrink-0 rounded-lg bg-brand-accent px-6 py-3 font-semibold text-white transition hover:bg-orange-700"
           >
             Más información

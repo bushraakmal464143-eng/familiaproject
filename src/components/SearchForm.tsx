@@ -56,7 +56,7 @@ export default function SearchForm() {
 
   return (
     <form
-      className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end"
+      className="grid grid-cols-1 gap-2 md:grid-cols-[1.6fr_1fr_1fr_1.1fr_auto] md:items-stretch"
       onSubmit={(e) => {
         if (!dateRange?.from || !dateRange?.to) {
           e.preventDefault();
@@ -64,47 +64,37 @@ export default function SearchForm() {
         }
       }}
     >
-      <div className="min-w-0 flex-1 lg:min-w-[200px]">
-        <label
-          htmlFor="destino"
-          className="mb-1 block text-sm font-medium text-gray-700"
-        >
-          ¿A dónde quieres ir?
-        </label>
+      <div className="min-w-0">
         <input
           id="destino"
           name="destino"
           type="text"
-          placeholder="Provincia, ciudad o nombre del camping"
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-brand-green focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+          defaultValue="Cualquier destino disponible"
+          className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-green focus:outline-none focus:ring-2 focus:ring-brand-green/30"
         />
       </div>
 
       {/* Calendario desplegable */}
-      <div ref={dateRef} className="relative sm:w-full sm:max-w-[220px] lg:w-52 lg:max-w-none">
-        <label
-          id="fechas-label"
-          className="mb-1 block text-sm font-medium text-gray-700"
-        >
-          Fechas
-        </label>
+      <div ref={dateRef} className="relative">
         <input type="hidden" name="fechas" value={fechasValue} />
         <button
           type="button"
-          aria-labelledby="fechas-label"
+          aria-label="Seleccionar fecha de entrada y salida"
           aria-expanded={dateOpen}
           aria-haspopup="dialog"
           onClick={() => {
             setDateOpen((o) => !o);
             setGuestOpen(false);
           }}
-          className={`flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-3 text-left text-sm transition focus:outline-none focus:ring-2 focus:ring-brand-green/30 ${
+          className={`flex h-12 w-full items-center justify-between gap-2 rounded-md border bg-white px-4 text-left text-sm transition focus:outline-none focus:ring-2 focus:ring-brand-green/30 ${
             dateOpen
               ? "border-brand-green ring-2 ring-brand-green/30"
               : "border-gray-300 hover:border-gray-400"
-          } ${dateRange?.from ? "text-gray-900" : "text-gray-400"}`}
+          } ${dateRange?.from ? "text-gray-900" : "text-gray-500"}`}
         >
-          <span className="truncate">{formatDateRange(dateRange)}</span>
+          <span className="truncate">
+            {dateRange?.from ? formatDateRange(dateRange) : "Entrada"}
+          </span>
           <CalendarIcon />
         </button>
 
@@ -142,32 +132,30 @@ export default function SearchForm() {
       </div>
 
       {/* Personas desplegable */}
-      <div ref={guestRef} className="relative sm:w-full sm:max-w-[180px] lg:w-40 lg:max-w-none">
-        <label
-          id="personas-label"
-          className="mb-1 block text-sm font-medium text-gray-700"
-        >
-          Personas
-        </label>
+      <div className="hidden items-center justify-center text-gray-500 md:flex">
+        <span aria-hidden className="text-lg font-semibold">→</span>
+      </div>
+
+      <div ref={guestRef} className="relative">
         <input type="hidden" name="personas" value={totalGuests} />
         <input type="hidden" name="adultos" value={adults} />
         <input type="hidden" name="ninos" value={children} />
         <button
           type="button"
-          aria-labelledby="personas-label"
+          aria-label="Seleccionar numero de personas"
           aria-expanded={guestOpen}
           aria-haspopup="listbox"
           onClick={() => {
             setGuestOpen((o) => !o);
             setDateOpen(false);
           }}
-          className={`flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-3 text-left text-sm transition focus:outline-none focus:ring-2 focus:ring-brand-green/30 ${
+          className={`flex h-12 w-full items-center justify-between gap-2 rounded-md border bg-white px-4 text-left text-sm transition focus:outline-none focus:ring-2 focus:ring-brand-green/30 ${
             guestOpen
               ? "border-brand-green ring-2 ring-brand-green/30"
               : "border-gray-300 hover:border-gray-400"
           } text-gray-900`}
         >
-          <span>{formatGuests(adults, children)}</span>
+          <span>{adults} adultos</span>
           <ChevronIcon open={guestOpen} />
         </button>
 
@@ -206,7 +194,7 @@ export default function SearchForm() {
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-brand-accent px-8 py-3 font-semibold text-white transition hover:bg-orange-700 sm:w-auto lg:shrink-0"
+        className="h-12 w-full rounded-md bg-[#b0003a] px-8 text-sm font-semibold text-white transition hover:bg-[#930030] md:w-auto md:min-w-[170px]"
       >
         Buscar
       </button>
