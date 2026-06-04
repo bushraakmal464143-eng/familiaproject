@@ -22,7 +22,8 @@ export type Customer = {
   id: string;
   email: string;
   name: string;
-  passwordHash: string;
+  passwordHash?: string;
+  googleId?: string;
   createdAt: string;
 };
 

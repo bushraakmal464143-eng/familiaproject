@@ -25,6 +25,37 @@ export async function getCustomerByEmail(
   return customers.find((c) => c.email.toLowerCase() === normalized);
 }
 
+export async function findOrCreateCustomerFromGoogle(profile: {
+  googleId: string;
+  email: string;
+  name: string;
+}): Promise<Customer> {
+  const customers = await getCustomers();
+  const byGoogle = customers.find((c) => c.googleId === profile.googleId);
+  if (byGoogle) return byGoogle;
+
+  const byEmail = customers.find(
+    (c) => c.email.toLowerCase() === profile.email.toLowerCase()
+  );
+  if (byEmail) {
+    byEmail.googleId = profile.googleId;
+    if (profile.name) byEmail.name = profile.name;
+    await saveCustomers(customers);
+    return byEmail;
+  }
+
+  const customer: Customer = {
+    id: generateId("cust", customers),
+    name: profile.name,
+    email: profile.email,
+    googleId: profile.googleId,
+    createdAt: new Date().toISOString(),
+  };
+  customers.push(customer);
+  await saveCustomers(customers);
+  return customer;
+}
+
 export async function registerCustomer(data: {
   name: string;
   email: string;

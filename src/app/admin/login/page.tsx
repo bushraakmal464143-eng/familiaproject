@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
+import LoginPageShell from "@/components/LoginPageShell";
 import { SITE_NAME } from "@/lib/site";
 
 function LoginForm() {
@@ -35,7 +36,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-cream px-4">
+    <LoginPageShell>
       <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-lg">
         <h1 className="text-xl font-bold text-brand-forest">
           {SITE_NAME} Admin
@@ -82,7 +83,7 @@ function LoginForm() {
           Por defecto: <code className="text-gray-500">admin123</code>
         </p>
       </div>
-    </div>
+    </LoginPageShell>
   );
 }
 
@@ -90,9 +91,9 @@ export default function AdminLoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center text-gray-500">
-          Cargando…
-        </div>
+        <LoginPageShell>
+          <p className="text-gray-500">Cargando…</p>
+        </LoginPageShell>
       }
     >
       <LoginForm />

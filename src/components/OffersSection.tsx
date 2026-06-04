@@ -11,9 +11,13 @@ import type { OfferRecord } from "@/lib/types";
 
 type OffersSectionProps = {
   initialOffers: OfferRecord[];
+  heading?: string;
 };
 
-export default function OffersSection({ initialOffers }: OffersSectionProps) {
+export default function OffersSection({
+  initialOffers,
+  heading = "Ofertas de campings de montaña",
+}: OffersSectionProps) {
   const [activeTab, setActiveTab] = useState<OfferCategory | "all">("all");
 
   const filtered = useMemo(
@@ -29,9 +33,7 @@ export default function OffersSection({ initialOffers }: OffersSectionProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Ofertas de campings
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900">{heading}</h2>
             <p className="mt-1 text-gray-600">
               <span className="font-semibold text-brand-accent">
                 {initialOffers.length} chollos

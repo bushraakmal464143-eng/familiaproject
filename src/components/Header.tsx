@@ -45,7 +45,14 @@ export default function Header() {
             Espacio campings
           </Link>
           <Link
-            href="/cuenta"
+            href="/signup"
+            className="hidden rounded-md border border-brand-accent px-3 py-1.5 text-sm font-medium text-brand-accent transition hover:bg-orange-50 sm:inline"
+            onClick={closeMenu}
+          >
+            Registrarse
+          </Link>
+          <Link
+            href="/cuenta/login"
             className="rounded-md border border-brand-green bg-brand-green px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-forest"
             onClick={closeMenu}
           >
@@ -85,6 +92,20 @@ export default function Header() {
           onClick={closeMenu}
         >
           Espacio campings
+        </Link>
+        <Link
+          href="/signup"
+          className="rounded-md px-2 py-1 text-sm font-medium text-brand-accent transition hover:bg-orange-50"
+          onClick={closeMenu}
+        >
+          Registrarse
+        </Link>
+        <Link
+          href="/cuenta/login"
+          className="rounded-md px-2 py-1 text-sm font-medium text-brand-forest transition hover:bg-gray-50"
+          onClick={closeMenu}
+        >
+          Iniciar sesión
         </Link>
       </nav>
     </header>

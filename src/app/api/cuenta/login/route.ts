@@ -6,7 +6,11 @@ import { createRoleToken, roleCookieOptions } from "@/lib/role-session";
 export async function POST(request: Request) {
   const body = (await request.json()) as { email?: string; password?: string };
   const customer = await getCustomerByEmail(body.email ?? "");
-  if (!customer || !verifyPassword(body.password ?? "", customer.passwordHash)) {
+  if (
+    !customer ||
+    !customer.passwordHash ||
+    !verifyPassword(body.password ?? "", customer.passwordHash)
+  ) {
     return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
   }
   const token = createRoleToken("customer", customer.id);

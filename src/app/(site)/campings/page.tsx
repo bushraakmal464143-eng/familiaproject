@@ -24,7 +24,7 @@ export default async function CampingsMontanaPage() {
           </p>
         </div>
       </section>
-      <OffersSection initialOffers={offers} />
+      <OffersSection initialOffers={offers} heading="offer da montana" />
     </>
   );
 }
