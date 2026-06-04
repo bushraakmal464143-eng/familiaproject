@@ -5,7 +5,7 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 
 const navLinks = [
-  { href: "/campings", label: "Campings de montana" },
+  { href: "/campings", label: "Campings de montaña" },
   { href: "/contacto", label: "Contacta con nosotros" },
 ];
 
