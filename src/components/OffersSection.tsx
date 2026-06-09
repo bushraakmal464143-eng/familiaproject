@@ -36,7 +36,7 @@ export default function OffersSection({
             <h2 className="text-2xl font-bold text-gray-900">{heading}</h2>
             <p className="mt-1 text-gray-600">
               <span className="font-semibold text-brand-accent">
-                {initialOffers.length} chollos
+                {initialOffers.length} ofertas
               </span>{" "}
               disponibles · Hoy te recomendamos
             </p>

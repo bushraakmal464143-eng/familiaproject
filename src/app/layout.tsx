@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
+import { getSiteSettings } from "@/lib/site-settings-store";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: `${SITE_NAME} | Campings, Glamping y Parques`,
-  description: `${SITE_TAGLINE}. Reserva tu parcela ideal en España.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: `${settings.siteName} | Campings, Glamping y Parques`,
+    description: `${settings.siteTagline}. Reserva tu alojamiento ideal en un camping en España`,
+  };
+}
 
 export default function RootLayout({
   children,

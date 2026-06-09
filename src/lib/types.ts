@@ -18,6 +18,24 @@ export type Camping = {
   createdAt: string;
 };
 
+export type SiteSettings = {
+  siteName: string;
+  siteTagline: string;
+  logoPart1: string;
+  logoAccent: string;
+  logoPart2: string;
+  logoSuffix: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImageUrl: string;
+  offersHeading: string;
+  trustPoint: string;
+  footerText: string;
+  contactEmail: string;
+  contactPhone: string;
+  updatedAt: string;
+};
+
 export type Customer = {
   id: string;
   email: string;

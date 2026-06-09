@@ -1,5 +1,6 @@
 import OffersSection from "@/components/OffersSection";
 import { getPublicOffers } from "@/lib/offers-store";
+import { getSiteSettings } from "@/lib/site-settings-store";
 import { SITE_NAME } from "@/lib/site";
 
 export const metadata = {
@@ -9,7 +10,10 @@ export const metadata = {
 };
 
 export default async function CampingsMontanaPage() {
-  const offers = await getPublicOffers();
+  const [offers, settings] = await Promise.all([
+    getPublicOffers(),
+    getSiteSettings(),
+  ]);
 
   return (
     <>
@@ -24,7 +28,7 @@ export default async function CampingsMontanaPage() {
           </p>
         </div>
       </section>
-      <OffersSection initialOffers={offers} heading="offer da montana" />
+      <OffersSection initialOffers={offers} heading={settings.offersHeading} />
     </>
   );
 }

@@ -35,6 +35,9 @@ yarn-error.log*
 /data/
 /public/uploads/
 
+# backend (local API — not pushed to this repo)
+/backend/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

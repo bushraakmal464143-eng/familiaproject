@@ -3,13 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import type { SiteBranding } from "@/lib/branding";
 
 const navLinks = [
   { href: "/campings", label: "Campings de montaña" },
-  { href: "/contacto", label: "Contacta con nosotros" },
 ];
 
-export default function Header() {
+type HeaderProps = {
+  branding?: SiteBranding;
+};
+
+export default function Header({ branding }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -22,7 +26,7 @@ export default function Header() {
           className="transition opacity-90 hover:opacity-100"
           onClick={closeMenu}
         >
-          <Logo />
+          <Logo branding={branding} />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex" aria-label="Principal">

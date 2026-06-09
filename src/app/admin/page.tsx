@@ -12,6 +12,12 @@ export default async function AdminDashboardPage() {
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label="Contenido web"
+          value="Editar"
+          href="/admin/site"
+          accent="orange"
+        />
         <StatCard label="Campings totales" value={stats.totalCampings} href="/admin/campings" />
         <StatCard label="Campings activos" value={stats.campingsByStatus.active} accent="green" />
         <StatCard label="Pendientes de alta" value={stats.campingsByStatus.pending} accent="orange" />

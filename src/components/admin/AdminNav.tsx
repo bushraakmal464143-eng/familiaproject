@@ -6,6 +6,7 @@ import { SITE_NAME } from "@/lib/site";
 
 const links = [
   { href: "/admin", label: "Panel", exact: true },
+  { href: "/admin/site", label: "Web", exact: false },
   { href: "/admin/campings", label: "Campings", exact: false },
   { href: "/admin/offers", label: "Ofertas", exact: false },
 ];

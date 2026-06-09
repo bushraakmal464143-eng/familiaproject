@@ -17,7 +17,7 @@ export const defaultOffers = [
   {
     id: "0",
     title: "Oferta especial en bungalow en Camping Vidrà",
-    subtitle: "Camping Vidrà ★★★★",
+    subtitle: "Camping Vidrà",
     rating: 8.8,
     reviews: 173,
     location: "Vidrà",
@@ -39,7 +39,7 @@ export const defaultOffers = [
   {
     id: "1",
     title: "Desconexión en los Pirineos con vistas a la montaña",
-    subtitle: "Camping Valle Alto ★★★★",
+    subtitle: "Camping Valle Alto ",
     rating: 8.6,
     reviews: 412,
     location: "Benasque",
@@ -60,7 +60,7 @@ export const defaultOffers = [
   {
     id: "2",
     title: "Glamping bajo las estrellas en Sierra Nevada",
-    subtitle: "Eco Glamp Sierra ★★★★★",
+    subtitle: "Eco Glamp Sierra ",
     rating: 9.1,
     reviews: 198,
     location: "Monachil",
@@ -79,7 +79,7 @@ export const defaultOffers = [
   {
     id: "3",
     title: "Camping familiar junto al lago de montaña",
-    subtitle: "Lago Azul Camping ★★★",
+    subtitle: "Lago Azul Camping ",
     rating: 8.2,
     reviews: 620,
     location: "Riaño",
@@ -96,7 +96,7 @@ export const defaultOffers = [
   {
     id: "4",
     title: "Ruta 4x4 y pernocta en camping de altura",
-    subtitle: "Altura 1800 Camping ★★★★",
+    subtitle: "Altura 1800 Camping ",
     rating: 8.4,
     reviews: 87,
     location: "Cerler",
@@ -114,7 +114,7 @@ export const defaultOffers = [
   {
     id: "5",
     title: "Escapada wellness en camping de montaña",
-    subtitle: "Monte Verde Spa Camping ★★★★",
+    subtitle: "Monte Verde Spa Camping ",
     rating: 8.9,
     reviews: 305,
     location: "La Molina",

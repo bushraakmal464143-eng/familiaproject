@@ -3,10 +3,7 @@ import Link from "next/link";
 import OffersSection from "@/components/OffersSection";
 import SearchForm from "@/components/SearchForm";
 import { getPublicOffers } from "@/lib/offers-store";
-import { SITE_NAME } from "@/lib/site";
-
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=1920&q=80";
+import { getSiteSettings } from "@/lib/site-settings-store";
 
 const popularSearches = [
   { href: "/destinos", label: "Destinos destacados", icon: "🗺️" },
@@ -22,17 +19,18 @@ const features = [
   { href: "/wifi", label: "Wi-Fi en el recinto", icon: "📶" },
 ];
 
-const trustPoints = ["Confirmación al instante"];
-
 export default async function HomePage() {
-  const offers = await getPublicOffers();
+  const [offers, settings] = await Promise.all([
+    getPublicOffers(),
+    getSiteSettings(),
+  ]);
 
   return (
     <>
       <section className="relative min-h-[50vh] text-white">
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src={HERO_IMAGE}
+            src={settings.heroImageUrl}
             alt="Tienda de campaña al atardecer en la montaña"
             fill
             priority
@@ -45,10 +43,10 @@ export default async function HomePage() {
         <div className="relative mx-auto flex min-h-[50vh] max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
           <div className="w-full rounded-xl border border-white/20 bg-brand-forest/65 p-5 shadow-xl backdrop-blur-sm sm:p-7">
             <h1 className="text-xl font-bold leading-tight sm:text-3xl">
-              Los mejores chollos de viaje por tiempo limitado
+              {settings.heroTitle}
             </h1>
             <p className="mt-2 text-sm text-green-100">
-              Encuentra tu parcela perfecta en España con {SITE_NAME}.
+              {settings.heroSubtitle}
             </p>
             <div className="mt-4 rounded-lg bg-white p-2 sm:p-3">
               <SearchForm />
@@ -59,21 +57,19 @@ export default async function HomePage() {
 
       <section className="border-b border-gray-100 bg-brand-cream py-6">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-6 px-4 sm:gap-10">
-          {trustPoints.map((point) => (
-            <span
-              key={point}
-              className="flex items-center gap-2 text-sm font-medium text-gray-700"
-            >
-              <span className="text-brand-accent" aria-hidden>
-                ✓
-              </span>
-              {point}
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <span className="text-brand-accent" aria-hidden>
+              ✓
             </span>
-          ))}
+            {settings.trustPoint}
+          </span>
         </div>
       </section>
 
-      <OffersSection initialOffers={offers} />
+      <OffersSection
+        initialOffers={offers}
+        heading={settings.offersHeading}
+      />
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold text-gray-900">Búsquedas populares</h2>
