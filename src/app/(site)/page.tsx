@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import CampingContactCTA from "@/components/CampingContactCTA";
 import OffersSection from "@/components/OffersSection";
 import SearchForm from "@/components/SearchForm";
 import { getPublicOffers } from "@/lib/offers-store";
@@ -115,28 +116,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900">Parques naturales</h2>
-        <p className="mt-2 max-w-2xl text-gray-600">
-          Desde los Pirineos hasta Doñana: explora los espacios protegidos de
-          España y reserva tu estancia en plena naturaleza.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          {[
-            "Campings cerca de mí",
-            "Áreas de autocaravanas",
-            "Cabañas y bungalows",
-          ].map((label) => (
-            <Link
-              key={label}
-              href="/cerca"
-              className="rounded-full border border-brand-green px-4 py-2 text-sm font-medium text-brand-forest transition hover:bg-brand-green hover:text-white"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      </section>
+    
 
       <section className="bg-brand-sand">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:flex-row sm:items-center sm:px-6 lg:px-8">
@@ -149,12 +129,7 @@ export default async function HomePage() {
               de precios y disponibilidad. Publica tu establecimiento hoy mismo.
             </p>
           </div>
-          <Link
-            href="/camping/registro"
-            className="shrink-0 rounded-lg bg-brand-accent px-6 py-3 font-semibold text-white transition hover:bg-orange-700"
-          >
-            Más información
-          </Link>
+          <CampingContactCTA />
         </div>
       </section>
 

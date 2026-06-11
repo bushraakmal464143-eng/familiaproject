@@ -87,3 +87,13 @@ export type Booking = {
   createdAt: string;
   paidAt?: string;
 };
+
+export type ContactInquiry = {
+  id: string;
+  name: string;
+  campsiteName: string;
+  email: string;
+  phone: string;
+  comments: string;
+  createdAt: string;
+};
