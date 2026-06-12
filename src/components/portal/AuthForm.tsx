@@ -5,6 +5,10 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import GoogleSignInButton from "@/components/portal/GoogleSignInButton";
 import LoginPageShell from "@/components/LoginPageShell";
+import {
+  isStrongPassword,
+  STRONG_PASSWORD_MESSAGE,
+} from "@/lib/password-rules";
 
 type AuthFormProps = {
   title: string;
@@ -54,33 +58,49 @@ function AuthFormInner({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    const body: Record<string, string> = { email, password };
-    if (fields === "register-customer") body.name = name;
-    if (fields === "register-camping") {
-      body.name = name;
-      body.phone = phone;
-      body.location = location;
-      body.region = region;
-      body.description = description;
-    }
-
-    const res = await fetch(apiPath, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    setLoading(false);
-
-    if (!res.ok) {
-      const data = (await res.json()) as { error?: string };
-      setError(data.error ?? "Error al iniciar sesión");
+    if (
+      (fields === "register-customer" || fields === "register-camping") &&
+      !isStrongPassword(password)
+    ) {
+      setError(STRONG_PASSWORD_MESSAGE);
       return;
     }
 
-    router.push(from);
-    router.refresh();
+    setLoading(true);
+
+    try {
+      const body: Record<string, string> = { email, password };
+      if (fields === "register-customer") body.name = name;
+      if (fields === "register-camping") {
+        body.name = name;
+        body.phone = phone;
+        body.location = location;
+        body.region = region;
+        body.description = description;
+      }
+
+      const res = await fetch(apiPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const data = (await res.json()) as { error?: string };
+        setError(data.error ?? "Error al iniciar sesión");
+        return;
+      }
+
+      router.push(from);
+      router.refresh();
+    } catch {
+      setError(
+        "No se pudo conectar con el servidor. Comprueba que el backend esté en marcha (puerto 4000)."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputClass =
@@ -122,8 +142,11 @@ function AuthFormInner({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={fields === "login" ? 1 : 8}
             />
+            {fields !== "login" && (
+              <p className="mt-1 text-xs text-gray-500">{STRONG_PASSWORD_MESSAGE}</p>
+            )}
           </div>
 
           {fields === "register-camping" && (
