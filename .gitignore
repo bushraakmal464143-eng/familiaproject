@@ -30,13 +30,14 @@ yarn-error.log*
 # env files
 .env*
 !.env.local.example
+!backend/.env.example
 
 # runtime data and uploads
 /data/
 /public/uploads/
 
-# backend (local API — not pushed to this repo)
-/backend/
+# backend
+/backend/node_modules/
 
 # typescript
 *.tsbuildinfo
