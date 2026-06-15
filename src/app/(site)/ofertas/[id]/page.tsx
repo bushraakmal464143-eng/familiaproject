@@ -6,6 +6,8 @@ import { getOfferById, getPublicOffers } from "@/lib/offers-store";
 import { getCampingById, stripCampingSecrets } from "@/lib/campings-store";
 import { getSessionSubject } from "@/lib/role-session";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ id: string }> };
 
 export default async function OfertaDetailPage({ params }: Props) {

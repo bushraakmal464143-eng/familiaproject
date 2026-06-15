@@ -1,7 +1,8 @@
 import PortalShell from "@/components/portal/PortalShell";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata = {
-  title: "Mi cuenta | CampoLibre",
+  title: `Mi cuenta | ${SITE_NAME}`,
   robots: { index: false, follow: false },
 };
 
@@ -16,7 +17,7 @@ export default function CuentaLayout({
 }) {
   return (
     <PortalShell
-      title="CampoLibre"
+      title={SITE_NAME}
       titleAccent="Cliente"
       nav={nav}
       loginPath="/cuenta/login"

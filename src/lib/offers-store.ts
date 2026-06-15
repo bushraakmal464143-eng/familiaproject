@@ -1,7 +1,9 @@
 import { defaultOffers, type OfferCategory } from "@/lib/offers";
+import { cleanSubtitle } from "@/lib/clean-offer-text";
 import { readJson, writeJson } from "@/lib/json-store";
 import { getCampings } from "@/lib/campings-store";
 import { campingIdByOfferIndex } from "@/lib/seed-data";
+import { revalidateOfferPages } from "@/lib/revalidate-offers";
 import type { OfferRecord, OfferStatus } from "@/lib/types";
 
 const FILE = "offers.json";
@@ -20,9 +22,7 @@ function migrateLegacyOffer(
       campingIdByOfferIndex[index] ??
       "camp_1",
     title: String(raw.title ?? ""),
-    subtitle: String(raw.subtitle ?? ""),
-    rating: Number(raw.rating) || 0,
-    reviews: Number(raw.reviews) || 0,
+    subtitle: cleanSubtitle(String(raw.subtitle ?? "")),
     location: String(raw.location ?? ""),
     region: String(raw.region ?? ""),
     mealPlan: raw.mealPlan as string | undefined,
@@ -30,7 +30,6 @@ function migrateLegacyOffer(
       ? (raw.highlights as string[])
       : [],
     description: String(raw.description ?? ""),
-    freeCancellation: raw.freeCancellation as string | undefined,
     travelDates: String(raw.travelDates ?? ""),
     priceFrom: Number(raw.priceFrom) || 0,
     image: String(raw.image ?? "/offers/cabin-style.png"),
@@ -52,9 +51,26 @@ function buildSeedOffers(): OfferRecord[] {
 
 export async function getOffers(): Promise<OfferRecord[]> {
   const raw = await readJson<unknown[]>(FILE, buildSeedOffers());
-  return raw.map((item, i) =>
+  const offers = raw.map((item, i) =>
     migrateLegacyOffer(item as Record<string, unknown>, i)
   );
+
+  const needsCleanup = raw.some((item, i) => {
+    const legacy = item as Record<string, unknown>;
+    const subtitle = String(legacy.subtitle ?? "");
+    return (
+      subtitle !== offers[i].subtitle ||
+      "rating" in legacy ||
+      "reviews" in legacy ||
+      "freeCancellation" in legacy
+    );
+  });
+
+  if (needsCleanup) {
+    await saveOffers(offers);
+  }
+
+  return offers;
 }
 
 export async function saveOffers(offers: OfferRecord[]): Promise<void> {
@@ -75,14 +91,16 @@ export async function getOffersByCamping(
 
 export async function upsertOffer(offer: OfferRecord): Promise<OfferRecord> {
   const offers = await getOffers();
-  const index = offers.findIndex((o) => o.id === offer.id);
+  const cleaned = { ...offer, subtitle: cleanSubtitle(offer.subtitle) };
+  const index = offers.findIndex((o) => o.id === cleaned.id);
   if (index >= 0) {
-    offers[index] = offer;
+    offers[index] = cleaned;
   } else {
-    offers.push(offer);
+    offers.push(cleaned);
   }
   await saveOffers(offers);
-  return offer;
+  revalidateOfferPages(cleaned.id);
+  return cleaned;
 }
 
 export async function deleteOffer(id: string): Promise<boolean> {
@@ -90,6 +108,7 @@ export async function deleteOffer(id: string): Promise<boolean> {
   const next = offers.filter((o) => o.id !== id);
   if (next.length === offers.length) return false;
   await saveOffers(next);
+  revalidateOfferPages(id);
   return true;
 }
 

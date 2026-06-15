@@ -50,14 +50,11 @@ export type OfferRecord = {
   campingId: string;
   title: string;
   subtitle: string;
-  rating: number;
-  reviews: number;
   location: string;
   region: string;
   mealPlan?: string;
   highlights: string[];
   description: string;
-  freeCancellation?: string;
   travelDates: string;
   priceFrom: number;
   image: string;

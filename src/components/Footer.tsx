@@ -7,37 +7,22 @@ const footerSections = [
   {
     title: "Explorar",
     links: [
-      { href: "/campings", label: "Campings" },
-      { href: "/glamping", label: "Glamping" },
-      { href: "/autocaravanas", label: "Áreas de autocaravanas" },
-      { href: "/playa", label: "Campings en la playa" },
-      { href: "/mascotas", label: "Admite mascotas" },
+      { href: "/", label: "Inicio" },
+      { href: "/campings", label: "Campings de montaña" },
     ],
   },
   {
-    title: "Popular",
+    title: "Tu cuenta",
     links: [
-      { href: "/electricidad", label: "Conexión eléctrica" },
-      { href: "/jacuzzi", label: "Glamping con jacuzzi" },
-      { href: "/parques-naturales", label: "Parques naturales" },
-      { href: "/cerca", label: "Campings cerca de mí" },
+      { href: "/signup", label: "Crear cuenta" },
+      { href: "/cuenta/login", label: "Iniciar sesión" },
     ],
   },
   {
-    title: "Guías",
+    title: "Para campings",
     links: [
-      { href: "/guias/camping", label: "Guías de camping" },
-      { href: "/guias/salvaje", label: "Camping salvaje" },
-      { href: "/guias/hogueras", label: "Hogueras" },
-      { href: "/guias/perros", label: "Camping con perro" },
-    ],
-  },
-  {
-    title: "Empresa",
-    links: [
-      { href: "/nosotros", label: "Sobre nosotros" },
-      { href: "/publicar", label: "Publica tu camping" },
-      { href: "/ayuda", label: "Centro de ayuda" },
+      { href: "/camping/login", label: "Espacio campings" },
+      { href: "/camping/registro", label: "Publica tu camping" },
     ],
   },
 ];
@@ -51,27 +36,18 @@ export default function Footer({ branding }: FooterProps) {
   const footerText =
     branding?.footerText ??
     "Reserva campings, glamping y parques vacacionales en España.";
+
   return (
     <footer className="mt-auto border-t border-gray-200 bg-brand-forest-dark text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block max-w-full">
               <Logo variant="light" branding={branding} />
             </Link>
             <p className="mt-4 text-sm text-green-100">{footerText}</p>
-            {branding?.contactEmail && (
-              <p className="mt-2 text-sm text-green-100">
-                <a
-                  href={`mailto:${branding.contactEmail}`}
-                  className="hover:text-brand-sun"
-                >
-                  {branding.contactEmail}
-                </a>
-              </p>
-            )}
             {branding?.contactPhone && (
-              <p className="text-sm text-green-100">{branding.contactPhone}</p>
+              <p className="mt-2 text-sm text-green-100">{branding.contactPhone}</p>
             )}
             <ul className="mt-4 space-y-1 text-sm text-green-100">
               <li>Confirmación inmediata</li>
@@ -99,22 +75,11 @@ export default function Footer({ branding }: FooterProps) {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-green-900 pt-8 sm:flex-row">
-          <p className="text-sm text-green-200">
+        <div className="mt-10 border-t border-green-900 pt-8">
+          <p className="text-center text-sm text-green-200 sm:text-left">
             &copy; {new Date().getFullYear()} {siteName}. Todos los derechos
             reservados.
           </p>
-          <div className="flex gap-6 text-sm text-green-100">
-            <Link href="/privacidad" className="hover:text-white">
-              Privacidad
-            </Link>
-            <Link href="/terminos" className="hover:text-white">
-              Términos
-            </Link>
-            <Link href="/cookies" className="hover:text-white">
-              Cookies
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

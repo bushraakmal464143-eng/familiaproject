@@ -1,5 +1,4 @@
 import AuthForm from "@/components/portal/AuthForm";
-import { isGoogleAuthConfigured } from "@/lib/google-oauth";
 
 export const metadata = {
   title: "Crear cuenta",
@@ -15,8 +14,6 @@ export default function SignupPage() {
       registerPath="/cuenta/login"
       registerLabel="Iniciar sesion"
       fields="register-customer"
-      showGoogleLogin={true}
-      googleSignInEnabled={isGoogleAuthConfigured()}
     />
   );
 }

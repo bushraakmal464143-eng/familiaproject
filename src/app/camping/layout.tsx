@@ -1,7 +1,8 @@
 import PortalShell from "@/components/portal/PortalShell";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata = {
-  title: "Espacio camping | CampoLibre",
+  title: `Espacio camping | ${SITE_NAME}`,
   robots: { index: false, follow: false },
 };
 
@@ -19,7 +20,7 @@ export default function CampingLayout({
 }) {
   return (
     <PortalShell
-      title="CampoLibre"
+      title={SITE_NAME}
       titleAccent="Camping"
       nav={nav}
       loginPath="/camping/login"

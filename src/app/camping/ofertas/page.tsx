@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import DeleteOfferButton from "@/components/admin/DeleteOfferButton";
 import { getOffersByCamping } from "@/lib/offers-store";
 import { getSessionSubject } from "@/lib/role-session";
 
@@ -34,9 +35,19 @@ export default async function CampingOfertasPage() {
                   {offer.status}
                 </span>
               </p>
-              <Link href={`/camping/ofertas/${offer.id}/editar`} className="mt-2 inline-block text-sm font-medium text-brand-accent hover:underline">
-                Editar
-              </Link>
+              <div className="mt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  href={`/camping/ofertas/${offer.id}/editar`}
+                  className="text-sm font-medium text-brand-accent hover:underline"
+                >
+                  Editar
+                </Link>
+                <DeleteOfferButton
+                  offerId={offer.id}
+                  offerTitle={offer.title}
+                  apiPath={`/api/camping/offers/${offer.id}`}
+                />
+              </div>
             </div>
           </div>
         ))}

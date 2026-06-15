@@ -37,8 +37,6 @@ export async function PUT(request: Request, context: RouteContext) {
     ...current,
     ...body,
     id,
-    rating: Number(body.rating ?? current.rating),
-    reviews: Number(body.reviews ?? current.reviews),
     priceFrom: Number(body.priceFrom ?? current.priceFrom),
     highlights: Array.isArray(body.highlights)
       ? body.highlights.filter(Boolean)

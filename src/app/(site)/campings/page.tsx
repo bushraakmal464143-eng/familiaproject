@@ -1,7 +1,19 @@
+import { format, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
 import OffersSection from "@/components/OffersSection";
+import SearchForm from "@/components/SearchForm";
 import { getPublicOffers } from "@/lib/offers-store";
+import {
+  filterOffersByDestination,
+  hasActiveSearch,
+  isAnyDestination,
+  normalizeDestination,
+  type SearchQuery,
+} from "@/lib/search-offers";
 import { getSiteSettings } from "@/lib/site-settings-store";
 import { SITE_NAME } from "@/lib/site";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: `Campings de montaña | ${SITE_NAME}`,
@@ -9,26 +21,86 @@ export const metadata = {
     "Ofertas en campings de montaña: Pirineos, Picos de Europa, Sierra Nevada y más.",
 };
 
-export default async function CampingsMontanaPage() {
-  const [offers, settings] = await Promise.all([
+type Props = {
+  searchParams: Promise<SearchQuery>;
+};
+
+function formatSearchDate(value: string | undefined): string {
+  if (!value) return "";
+  try {
+    return format(parseISO(value), "d MMM yyyy", { locale: es });
+  } catch {
+    return value;
+  }
+}
+
+export default async function CampingsMontanaPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const [allOffers, settings] = await Promise.all([
     getPublicOffers(),
     getSiteSettings(),
   ]);
+
+  const destino = normalizeDestination(params.destino);
+  const offers = filterOffersByDestination(allOffers, destino);
+  const searching = hasActiveSearch(params);
+  const adults = Number(params.adultos) || 2;
+  const children = Number(params.ninos) || 0;
 
   return (
     <>
       <section className="border-b border-brand-forest/20 bg-brand-forest px-4 py-12 text-white sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Campings de montaña
+            {searching ? "Resultados de búsqueda" : "Campings de montaña"}
           </h1>
-          <p className="mt-3 max-w-2xl text-green-100">
-            Bungalows, parcelas y glamping con vistas a la montaña. Reserva con
-            confirmación al instante en {SITE_NAME}.
-          </p>
+          {searching ? (
+            <p className="mt-3 max-w-2xl text-green-100">
+              {isAnyDestination(destino)
+                ? "Todos los destinos"
+                : `Destino: ${destino}`}
+              {" · "}
+              {formatSearchDate(params.entrada)} – {formatSearchDate(params.salida)}
+              {" · "}
+              {children > 0
+                ? `${adults} adultos, ${children} niños`
+                : `${adults} adultos`}
+            </p>
+          ) : (
+            <p className="mt-3 max-w-2xl text-green-100">
+              Bungalows, parcelas y glamping con vistas a la montaña. Reserva con
+              confirmación al instante en {SITE_NAME}.
+            </p>
+          )}
+          <div className="mt-6 rounded-lg bg-white p-2 sm:p-3">
+            <SearchForm
+              target="campings"
+              initialDestino={destino}
+              initialEntrada={params.entrada}
+              initialSalida={params.salida}
+              initialAdults={adults}
+              initialChildren={children}
+            />
+          </div>
         </div>
       </section>
-      <OffersSection initialOffers={offers} heading={settings.offersHeading} />
+
+      {searching && offers.length === 0 ? (
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-center text-gray-600">
+            No hay ofertas para esta búsqueda. Prueba otro destino o fechas.
+          </p>
+        </section>
+      ) : (
+        <OffersSection
+          initialOffers={offers}
+          heading={
+            searching
+              ? `${offers.length} oferta${offers.length === 1 ? "" : "s"} encontrada${offers.length === 1 ? "" : "s"}`
+              : settings.offersHeading
+          }
+        />
+      )}
     </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ImageUploadField from "@/components/ImageUploadField";
 import type { OfferRecord } from "@/lib/types";
 
 type CampingOfferFormProps = {
@@ -36,8 +37,6 @@ export default function CampingOfferForm({ offer, photos }: CampingOfferFormProp
       category,
       highlights: offer?.highlights ?? [],
       subtitle: offer?.subtitle ?? title,
-      rating: offer?.rating ?? 8,
-      reviews: offer?.reviews ?? 0,
       location: offer?.location,
       region: offer?.region,
     };
@@ -90,15 +89,24 @@ export default function CampingOfferForm({ offer, photos }: CampingOfferFormProp
         <label className="text-sm font-medium text-gray-700">Fechas / disponibilidad</label>
         <input className={inputClass} value={travelDates} onChange={(e) => setTravelDates(e.target.value)} />
       </div>
-      <div>
-        <label className="text-sm font-medium text-gray-700">Imagen principal</label>
-        <select className={inputClass} value={image} onChange={(e) => setImage(e.target.value)}>
-          {photos.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-          <option value="/offers/cabin-style.png">Imagen por defecto</option>
-        </select>
-      </div>
+      <ImageUploadField
+        value={image}
+        onChange={setImage}
+        uploadUrl="/api/camping/offers/upload"
+        label="Imagen principal"
+      />
+      {photos.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700">
+            O elegir de tus fotos del camping
+          </label>
+          <select className={inputClass} value={image} onChange={(e) => setImage(e.target.value)}>
+            {photos.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <button type="submit" disabled={saving} className="rounded-lg bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
         {saving ? "Guardando…" : offer ? "Guardar" : "Publicar oferta"}
       </button>

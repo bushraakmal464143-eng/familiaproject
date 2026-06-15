@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ImageUploadField from "@/components/ImageUploadField";
 import type { OfferCategory } from "@/lib/offers";
 import type { OfferRecord, OfferStatus } from "@/lib/types";
 
@@ -35,8 +36,6 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
 
   const [title, setTitle] = useState(offer?.title ?? "");
   const [subtitle, setSubtitle] = useState(offer?.subtitle ?? "");
-  const [rating, setRating] = useState(String(offer?.rating ?? 8));
-  const [reviews, setReviews] = useState(String(offer?.reviews ?? 0));
   const [location, setLocation] = useState(offer?.location ?? "");
   const [region, setRegion] = useState(offer?.region ?? "");
   const [mealPlan, setMealPlan] = useState(offer?.mealPlan ?? "");
@@ -44,9 +43,6 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     highlightsToText(offer?.highlights ?? [])
   );
   const [description, setDescription] = useState(offer?.description ?? "");
-  const [freeCancellation, setFreeCancellation] = useState(
-    offer?.freeCancellation ?? ""
-  );
   const [travelDates, setTravelDates] = useState(offer?.travelDates ?? "");
   const [priceFrom, setPriceFrom] = useState(String(offer?.priceFrom ?? 0));
   const [image, setImage] = useState(offer?.image ?? "/offers/cabin-style.png");
@@ -72,14 +68,11 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     const payload = {
       title,
       subtitle,
-      rating: Number(rating),
-      reviews: Number(reviews),
       location,
       region,
       mealPlan: mealPlan || undefined,
       highlights: textToHighlights(highlights),
       description,
-      freeCancellation: freeCancellation || undefined,
       travelDates,
       priceFrom: Number(priceFrom),
       image,
@@ -139,33 +132,11 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className={labelClass}>Subtítulo (camping + estrellas)</label>
+          <label className={labelClass}>Subtítulo</label>
           <input
             className={inputClass}
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>Valoración</label>
-          <input
-            type="number"
-            step="0.1"
-            min="0"
-            max="10"
-            className={inputClass}
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>Nº opiniones</label>
-          <input
-            type="number"
-            min="0"
-            className={inputClass}
-            value={reviews}
-            onChange={(e) => setReviews(e.target.value)}
           />
         </div>
         <div>
@@ -238,12 +209,11 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className={labelClass}>Ruta imagen (public/)</label>
-          <input
-            className={inputClass}
+          <ImageUploadField
             value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="/offers/cabin-style.png"
+            onChange={setImage}
+            uploadUrl="/api/admin/offers/upload"
+            label="Imagen de la oferta"
           />
         </div>
         <div>
@@ -287,14 +257,6 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
             className={inputClass}
             value={travelDates}
             onChange={(e) => setTravelDates(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <label className={labelClass}>Cancelación gratuita</label>
-          <input
-            className={inputClass}
-            value={freeCancellation}
-            onChange={(e) => setFreeCancellation(e.target.value)}
           />
         </div>
         <div className="sm:col-span-2">

@@ -1,5 +1,4 @@
 import AuthForm from "@/components/portal/AuthForm";
-import { isGoogleAuthConfigured } from "@/lib/google-oauth";
 
 export default function CuentaLoginPage() {
   return (
@@ -10,8 +9,6 @@ export default function CuentaLoginPage() {
       registerPath="/signup"
       registerLabel="Crear cuenta"
       fields="login"
-      showGoogleLogin
-      googleSignInEnabled={isGoogleAuthConfigured()}
     />
   );
 }

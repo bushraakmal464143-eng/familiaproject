@@ -12,11 +12,13 @@ import type { OfferRecord } from "@/lib/types";
 type OffersSectionProps = {
   initialOffers: OfferRecord[];
   heading?: string;
+  id?: string;
 };
 
 export default function OffersSection({
   initialOffers,
   heading = "Ofertas de campings de montaña",
+  id,
 }: OffersSectionProps) {
   const [activeTab, setActiveTab] = useState<OfferCategory | "all">("all");
 
@@ -29,7 +31,10 @@ export default function OffersSection({
   const rest = filtered.filter((o) => o.id !== featured?.id);
 
   return (
-    <section className="border-b border-gray-100 bg-white py-10 sm:py-14">
+    <section
+      id={id}
+      className="border-b border-gray-100 bg-white py-10 sm:py-14"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

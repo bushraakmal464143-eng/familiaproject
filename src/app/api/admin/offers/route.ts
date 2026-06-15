@@ -5,6 +5,7 @@ import {
   upsertOffer,
 } from "@/lib/offers-store";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { cleanSubtitle } from "@/lib/clean-offer-text";
 import type { OfferRecord } from "@/lib/types";
 
 async function requireAdmin() {
@@ -32,9 +33,7 @@ export async function POST(request: Request) {
     id: body.id?.trim() || generateOfferId(existing),
     campingId: body.campingId?.trim() || "camp_1",
     title: body.title?.trim() ?? "",
-    subtitle: body.subtitle?.trim() ?? "",
-    rating: Number(body.rating) || 0,
-    reviews: Number(body.reviews) || 0,
+    subtitle: cleanSubtitle(body.subtitle?.trim() ?? ""),
     location: body.location?.trim() ?? "",
     region: body.region?.trim() ?? "",
     mealPlan: body.mealPlan?.trim() || undefined,
@@ -42,7 +41,6 @@ export async function POST(request: Request) {
       ? body.highlights.filter(Boolean)
       : [],
     description: body.description?.trim() ?? "",
-    freeCancellation: body.freeCancellation?.trim() || undefined,
     travelDates: body.travelDates?.trim() ?? "",
     priceFrom: Number(body.priceFrom) || 0,
     image: body.image?.trim() ?? "/offers/cabin-style.png",

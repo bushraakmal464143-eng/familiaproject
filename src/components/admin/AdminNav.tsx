@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SITE_NAME } from "@/lib/site";
 
 const links = [
@@ -13,12 +13,10 @@ const links = [
 
 export default function AdminNav() {
   const pathname = usePathname();
-  const router = useRouter();
 
   async function logout() {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin/login");
-    router.refresh();
+    await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
+    window.location.href = "/cuenta/login";
   }
 
   return (

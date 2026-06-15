@@ -23,8 +23,6 @@ export async function PUT(request: Request, context: Ctx) {
     campingId,
     featured: false,
     priceFrom: Number(body.priceFrom ?? current.priceFrom),
-    rating: Number(body.rating ?? current.rating),
-    reviews: Number(body.reviews ?? current.reviews),
   };
   await upsertOffer(offer);
   return NextResponse.json(offer);

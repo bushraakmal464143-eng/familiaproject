@@ -1,6 +1,7 @@
 import { readJson, writeJson, generateId } from "@/lib/json-store";
 import { hashPassword } from "@/lib/password";
 import { buildSeedCampings } from "@/lib/seed-data";
+import { revalidateOfferPages } from "@/lib/revalidate-offers";
 import type { Camping, CampingStatus } from "@/lib/types";
 
 const FILE = "campings.json";
@@ -105,7 +106,11 @@ export async function setCampingStatus(
   id: string,
   status: CampingStatus
 ): Promise<Camping | undefined> {
-  return updateCamping(id, { status });
+  const camping = await updateCamping(id, { status });
+  if (camping) {
+    revalidateOfferPages();
+  }
+  return camping;
 }
 
 export function stripCampingSecrets(camping: Camping) {

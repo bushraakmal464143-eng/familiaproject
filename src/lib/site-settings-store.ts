@@ -28,10 +28,26 @@ export function defaultSiteSettings(): SiteSettings {
   };
 }
 
+function normalizeSiteName(name: string): string {
+  const lower = name.trim().toLowerCase();
+  if (
+    lower === "ofertasdecamping.com" ||
+    lower === "campolibre" ||
+    lower === "ofertas de camping.com"
+  ) {
+    return SITE_NAME;
+  }
+  return name;
+}
+
 export async function getSiteSettings(): Promise<SiteSettings> {
   const raw = await readJson<Partial<SiteSettings> | null>(FILE, null);
   if (!raw) return defaultSiteSettings();
-  return { ...defaultSiteSettings(), ...raw };
+  const merged = { ...defaultSiteSettings(), ...raw };
+  if (merged.siteName) {
+    merged.siteName = normalizeSiteName(merged.siteName);
+  }
+  return merged;
 }
 
 export async function saveSiteSettings(

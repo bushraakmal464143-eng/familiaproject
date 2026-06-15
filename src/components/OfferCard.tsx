@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { OfferRecord } from "@/lib/types";
+import { cleanSubtitle } from "@/lib/clean-offer-text";
 
 type OfferCardProps = {
   offer: OfferRecord;
@@ -58,15 +59,7 @@ export default function OfferCard({ offer, featured = false }: OfferCardProps) {
           <h3 className="text-base font-bold leading-snug text-gray-900 sm:text-lg">
             {offer.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-600">
-            {offer.subtitle}{" "}
-            <span className="font-semibold text-brand-forest">
-              {offer.rating}
-            </span>{" "}
-            <span className="text-gray-500">
-              {offer.reviews} opiniones
-            </span>
-          </p>
+          <p className="mt-1 text-sm text-gray-600">{cleanSubtitle(offer.subtitle)}</p>
 
           <ul className="mt-3 space-y-1.5 text-sm text-gray-700">
             <li className="flex items-start gap-2">
@@ -94,12 +87,6 @@ export default function OfferCard({ offer, featured = false }: OfferCardProps) {
           <p className="mt-2 line-clamp-2 text-sm text-gray-600">
             {offer.description}
           </p>
-
-          {offer.freeCancellation && (
-            <p className="mt-2 flex items-center gap-1 text-sm font-medium text-brand-green">
-              <span aria-hidden>✓</span> {offer.freeCancellation}
-            </p>
-          )}
 
           <p className="mt-2 flex items-center gap-1 text-xs text-gray-500">
             <span aria-hidden>📅</span> {offer.travelDates}

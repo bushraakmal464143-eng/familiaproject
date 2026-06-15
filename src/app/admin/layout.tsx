@@ -1,7 +1,8 @@
 import AdminShell from "@/components/admin/AdminShell";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata = {
-  title: "Admin | CampoLibre",
+  title: `Admin | ${SITE_NAME}`,
   robots: { index: false, follow: false },
 };
 

@@ -8,6 +8,9 @@ export async function readJson<T>(filename: string, fallback: T): Promise<T> {
   try {
     await fs.access(file);
     const raw = await fs.readFile(file, "utf-8");
+    if (!raw.trim()) {
+      throw new Error("Empty JSON file");
+    }
     return JSON.parse(raw) as T;
   } catch {
     await fs.mkdir(DATA_DIR, { recursive: true });

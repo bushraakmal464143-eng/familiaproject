@@ -42,3 +42,15 @@ export function sessionCookieOptions(token: string) {
     maxAge: SESSION_MAX_AGE_SEC,
   };
 }
+
+export function clearSessionCookieOptions() {
+  return {
+    name: ADMIN_COOKIE,
+    value: "",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: 0,
+  };
+}
