@@ -29,6 +29,25 @@ export async function POST(request: Request) {
   const body = (await request.json()) as Partial<OfferRecord>;
   const existing = await getOffers();
 
+  const gallery =
+    Array.isArray(body.gallery) && body.gallery.length > 0
+      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, 59)
+      : undefined;
+
+  const nightsOptions =
+    Array.isArray(body.nightsOptions) && body.nightsOptions.length > 0
+      ? body.nightsOptions
+          .map((n) => Number(n))
+          .filter((n) => Number.isFinite(n) && n > 0)
+          .map((n) => Math.floor(n))
+          .slice(0, 12)
+      : undefined;
+
+  const countdownProgress =
+    body.countdownProgress != null && Number.isFinite(Number(body.countdownProgress))
+      ? Math.max(0, Math.min(100, Number(body.countdownProgress)))
+      : undefined;
+
   const offer: OfferRecord = {
     id: body.id?.trim() || generateOfferId(existing),
     campingId: body.campingId?.trim() || "camp_1",
@@ -44,9 +63,15 @@ export async function POST(request: Request) {
     travelDates: body.travelDates?.trim() ?? "",
     priceFrom: Number(body.priceFrom) || 0,
     image: body.image?.trim() ?? "/offers/cabin-style.png",
+    gallery,
     badge: body.badge?.trim() || undefined,
-    saves: body.saves != null ? Number(body.saves) : undefined,
     countdown: body.countdown?.trim() || undefined,
+    countdownProgress,
+    nightsOptions,
+    ctaText: body.ctaText?.trim() || undefined,
+    accommodationName: body.accommodationName?.trim() || undefined,
+    accommodationLinkText: body.accommodationLinkText?.trim() || undefined,
+    mapLabel: body.mapLabel?.trim() || undefined,
     category: body.category ?? "new",
     status: body.status ?? "active",
     featured: Boolean(body.featured),

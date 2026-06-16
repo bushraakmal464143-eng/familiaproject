@@ -33,6 +33,25 @@ export async function PUT(request: Request, context: RouteContext) {
   }
 
   const body = (await request.json()) as Partial<OfferRecord>;
+  const gallery =
+    Array.isArray(body.gallery) && body.gallery.length > 0
+      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, 59)
+      : undefined;
+
+  const nightsOptions =
+    Array.isArray(body.nightsOptions) && body.nightsOptions.length > 0
+      ? body.nightsOptions
+          .map((n) => Number(n))
+          .filter((n) => Number.isFinite(n) && n > 0)
+          .map((n) => Math.floor(n))
+          .slice(0, 12)
+      : undefined;
+
+  const countdownProgress =
+    body.countdownProgress != null && Number.isFinite(Number(body.countdownProgress))
+      ? Math.max(0, Math.min(100, Number(body.countdownProgress)))
+      : undefined;
+
   const offer: OfferRecord = {
     ...current,
     ...body,
@@ -41,7 +60,9 @@ export async function PUT(request: Request, context: RouteContext) {
     highlights: Array.isArray(body.highlights)
       ? body.highlights.filter(Boolean)
       : current.highlights,
-    saves: body.saves != null ? Number(body.saves) : current.saves,
+    gallery: gallery ?? current.gallery,
+    nightsOptions: nightsOptions ?? current.nightsOptions,
+    countdownProgress: countdownProgress ?? current.countdownProgress,
     featured:
       body.featured !== undefined ? Boolean(body.featured) : current.featured,
   };

@@ -60,8 +60,13 @@ export type OfferRecord = {
   image: string;
   gallery?: string[];
   badge?: string;
-  saves?: number;
   countdown?: string;
+  countdownProgress?: number; // 0..100
+  nightsOptions?: number[]; // e.g. [1,2,3,4,5]
+  ctaText?: string; // supports {price}
+  accommodationName?: string; // overrides camping/subtitle in boxes
+  accommodationLinkText?: string; // e.g. "Ver alojamiento →"
+  mapLabel?: string; // text shown in map section placeholder
   category: Exclude<OfferCategory, "all">;
   status: OfferStatus;
   featured?: boolean;

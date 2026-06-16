@@ -88,7 +88,7 @@ export default async function HomePage({
             <p className="mt-2 text-sm text-green-100">
               {settings.heroSubtitle}
             </p>
-            <div className="mt-4 overflow-visible rounded-lg bg-white p-2 sm:p-3">
+            <div className="mt-4 overflow-visible rounded-lg bg-transparent p-0 md:bg-white md:p-3">
               <SearchForm target="home" initialDestino={destino} />
             </div>
           </div>

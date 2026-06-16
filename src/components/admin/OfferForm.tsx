@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUploadField from "@/components/ImageUploadField";
+import OfferGalleryUpload from "@/components/admin/OfferGalleryUpload";
 import type { OfferCategory } from "@/lib/offers";
 import type { OfferRecord, OfferStatus } from "@/lib/types";
 
@@ -34,6 +34,20 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const initialImages = (() => {
+    const defaults = [
+      "/offers/montana-1.svg",
+      "/offers/montana-2.svg",
+      "/offers/montana-3.svg",
+      "/offers/montana-4.svg",
+      "/offers/montana-5.svg",
+    ];
+    const raw = [offer?.image, ...(offer?.gallery ?? [])].filter(Boolean) as string[];
+    const unique = raw.filter((src, idx) => raw.indexOf(src) === idx);
+    // New offers start with 5 placeholders; existing keep their images.
+    return unique.length > 0 ? unique.slice(0, 60) : defaults;
+  })();
+
   const [title, setTitle] = useState(offer?.title ?? "");
   const [subtitle, setSubtitle] = useState(offer?.subtitle ?? "");
   const [location, setLocation] = useState(offer?.location ?? "");
@@ -45,12 +59,25 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
   const [description, setDescription] = useState(offer?.description ?? "");
   const [travelDates, setTravelDates] = useState(offer?.travelDates ?? "");
   const [priceFrom, setPriceFrom] = useState(String(offer?.priceFrom ?? 0));
-  const [image, setImage] = useState(offer?.image ?? "/offers/cabin-style.png");
+  const [images, setImages] = useState<string[]>(initialImages);
   const [badge, setBadge] = useState(offer?.badge ?? "");
-  const [saves, setSaves] = useState(
-    offer?.saves != null ? String(offer.saves) : ""
-  );
   const [countdown, setCountdown] = useState(offer?.countdown ?? "");
+  const [countdownProgress, setCountdownProgress] = useState(
+    offer?.countdownProgress != null ? String(offer.countdownProgress) : "75"
+  );
+  const [nightsOptionsText, setNightsOptionsText] = useState(
+    offer?.nightsOptions?.length ? offer.nightsOptions.join(", ") : "1, 2, 3, 4, 5"
+  );
+  const [ctaText, setCtaText] = useState(
+    offer?.ctaText ?? "Ver fechas desde {price} €/persona"
+  );
+  const [accommodationName, setAccommodationName] = useState(
+    offer?.accommodationName ?? ""
+  );
+  const [accommodationLinkText, setAccommodationLinkText] = useState(
+    offer?.accommodationLinkText ?? "Ver alojamiento →"
+  );
+  const [mapLabel, setMapLabel] = useState(offer?.mapLabel ?? "");
   const [campingId, setCampingId] = useState(
     offer?.campingId ?? campings[0]?.id ?? ""
   );
@@ -65,6 +92,33 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     setError(null);
     setSaving(true);
 
+    const cleanedImages = images.map((s) => s.trim()).filter(Boolean);
+    const unique = cleanedImages.filter((src, idx) => cleanedImages.indexOf(src) === idx);
+    if (unique.length < 5) {
+      setSaving(false);
+      setError("Por favor, sube al menos 5 imágenes distintas para la oferta.");
+      return;
+    }
+    const mainImage = unique[0] ?? "/offers/cabin-style.png";
+    const gallery = unique.slice(1, 60);
+
+    const nightsOptions = nightsOptionsText
+      .split(",")
+      .map((s) => Number(s.trim()))
+      .filter((n) => Number.isFinite(n) && n > 0)
+      .map((n) => Math.floor(n))
+      .filter((n, idx, arr) => arr.indexOf(n) === idx)
+      .slice(0, 12);
+    if (nightsOptions.length === 0) {
+      setSaving(false);
+      setError("Define al menos una opción válida de noches (por ejemplo: 1,2,3).");
+      return;
+    }
+
+    const progressNum = Number(countdownProgress);
+    const progress =
+      Number.isFinite(progressNum) ? Math.max(0, Math.min(100, progressNum)) : 75;
+
     const payload = {
       title,
       subtitle,
@@ -75,10 +129,16 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
       description,
       travelDates,
       priceFrom: Number(priceFrom),
-      image,
+      image: mainImage,
+      gallery: gallery.length > 0 ? gallery : undefined,
       badge: badge || undefined,
-      saves: saves ? Number(saves) : undefined,
       countdown: countdown || undefined,
+      countdownProgress: countdown ? progress : undefined,
+      nightsOptions,
+      ctaText: ctaText.trim() || undefined,
+      accommodationName: accommodationName.trim() || undefined,
+      accommodationLinkText: accommodationLinkText.trim() || undefined,
+      mapLabel: mapLabel.trim() || undefined,
       campingId,
       category,
       status,
@@ -209,12 +269,14 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <ImageUploadField
-            value={image}
-            onChange={setImage}
-            uploadUrl="/api/admin/offers/upload"
-            label="Imagen de la oferta"
-          />
+          <label className={labelClass}>Imágenes de la oferta (5)</label>
+          <div className="mt-3">
+            <OfferGalleryUpload
+              images={images}
+              onChange={setImages}
+              uploadUrl="/api/admin/offers/upload"
+            />
+          </div>
         </div>
         <div>
           <label className={labelClass}>Etiqueta (badge)</label>
@@ -225,22 +287,67 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
           />
         </div>
         <div>
-          <label className={labelClass}>Favoritos (saves)</label>
-          <input
-            type="number"
-            min="0"
-            className={inputClass}
-            value={saves}
-            onChange={(e) => setSaves(e.target.value)}
-          />
-        </div>
-        <div>
           <label className={labelClass}>Cuenta atrás</label>
           <input
             className={inputClass}
             value={countdown}
             onChange={(e) => setCountdown(e.target.value)}
             placeholder="Quedan 5 días"
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Progreso cuenta atrás (0–100)</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            className={inputClass}
+            value={countdownProgress}
+            onChange={(e) => setCountdownProgress(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Opciones de noches (separadas por coma)</label>
+          <input
+            className={inputClass}
+            value={nightsOptionsText}
+            onChange={(e) => setNightsOptionsText(e.target.value)}
+            placeholder="1, 2, 3, 4, 5"
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Texto del botón CTA (usa {"{price}"} para el precio)</label>
+          <input
+            className={inputClass}
+            value={ctaText}
+            onChange={(e) => setCtaText(e.target.value)}
+            placeholder="Ver fechas desde {price} €/persona"
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Nombre del alojamiento (opcional)</label>
+          <input
+            className={inputClass}
+            value={accommodationName}
+            onChange={(e) => setAccommodationName(e.target.value)}
+            placeholder="Si lo dejas vacío, usamos el nombre del camping"
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Texto del enlace de alojamiento</label>
+          <input
+            className={inputClass}
+            value={accommodationLinkText}
+            onChange={(e) => setAccommodationLinkText(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Texto sección mapa (opcional)</label>
+          <input
+            className={inputClass}
+            value={mapLabel}
+            onChange={(e) => setMapLabel(e.target.value)}
+            placeholder="Ólvega / Dirección / Zona…"
           />
         </div>
         <div>

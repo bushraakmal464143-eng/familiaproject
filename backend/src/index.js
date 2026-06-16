@@ -3,7 +3,6 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { connectDb } = require("./db");
-const cuentaRoutes = require("./routes/cuenta");
 
 const PORT = Number(process.env.PORT) || 4000;
 const app = express();
@@ -21,10 +20,13 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-app.use("/api/cuenta", cuentaRoutes);
-
 async function start() {
   await connectDb();
+
+  // Routes depend on DB mode (mongo vs json fallback), so load them after `connectDb()`.
+  const cuentaRoutes = require("./routes/cuenta");
+  app.use("/api/cuenta", cuentaRoutes);
+
   app.listen(PORT, () => {
     console.log(`API server running on http://localhost:${PORT}`);
   });

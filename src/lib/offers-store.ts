@@ -35,8 +35,26 @@ function migrateLegacyOffer(
     image: String(raw.image ?? "/offers/cabin-style.png"),
     gallery: raw.gallery as string[] | undefined,
     badge: raw.badge as string | undefined,
-    saves: raw.saves as number | undefined,
     countdown: raw.countdown as string | undefined,
+    countdownProgress:
+      typeof raw.countdownProgress === "number"
+        ? Math.max(0, Math.min(100, raw.countdownProgress))
+        : undefined,
+    nightsOptions: Array.isArray(raw.nightsOptions)
+      ? (raw.nightsOptions as unknown[])
+          .map((n) => Number(n))
+          .filter((n) => Number.isFinite(n) && n > 0)
+          .map((n) => Math.floor(n))
+          .slice(0, 12)
+      : undefined,
+    ctaText: typeof raw.ctaText === "string" ? raw.ctaText : undefined,
+    accommodationName:
+      typeof raw.accommodationName === "string" ? raw.accommodationName : undefined,
+    accommodationLinkText:
+      typeof raw.accommodationLinkText === "string"
+        ? raw.accommodationLinkText
+        : undefined,
+    mapLabel: typeof raw.mapLabel === "string" ? raw.mapLabel : undefined,
     category: safeCategory,
     status: (raw.status as OfferStatus) ?? "active",
     featured: Boolean(raw.featured),

@@ -66,6 +66,7 @@ export default function SearchForm({
   const [adults, setAdults] = useState(initialAdults);
   const [children, setChildren] = useState(initialChildren);
   const [searching, setSearching] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const dateRef = useRef<HTMLDivElement>(null);
   const guestRef = useRef<HTMLDivElement>(null);
@@ -88,6 +89,7 @@ export default function SearchForm({
     setSearching(true);
     setDateOpen(false);
     setGuestOpen(false);
+    setMobileOpen(false);
 
     const params = new URLSearchParams();
     const trimmedDestino = destino.trim();
@@ -133,11 +135,77 @@ export default function SearchForm({
     performSearch();
   }
 
+  function mobileSubtitle(): string {
+    const parts: string[] = [];
+    const trimmed = destino.trim();
+    if (trimmed && !isAnyDestination(trimmed)) {
+      parts.push(trimmed);
+    }
+    if (dateRange?.from) {
+      parts.push(formatDateRange(dateRange));
+    }
+    const guestLabel =
+      children > 0
+        ? `${adults} adultos, ${children} niños`
+        : `${adults} adultos`;
+    if (parts.length === 0) {
+      return "Añade Fechas | Modifica Viajeros";
+    }
+    parts.push(guestLabel);
+    return parts.join(" · ");
+  }
+
+  function openMobilePanel() {
+    setMobileOpen(true);
+  }
+
   return (
-    <form
-      className="grid grid-cols-1 gap-2 md:grid-cols-[1.6fr_1fr_auto_1.1fr_auto] md:items-stretch"
-      onSubmit={handleSubmit}
-    >
+    <div className="w-full">
+      <button
+        type="button"
+        onClick={openMobilePanel}
+        className="flex w-full items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-3.5 text-left shadow-md transition hover:shadow-lg md:hidden"
+        aria-label="Busca tu oferta"
+      >
+        <SearchIcon className="h-5 w-5 shrink-0 text-gray-900" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-bold text-gray-900">
+            Busca tu oferta
+          </span>
+          <span className="mt-0.5 block truncate text-xs text-gray-500">
+            {mobileSubtitle()}
+          </span>
+        </span>
+        <span
+          role="presentation"
+          onClick={(e) => {
+            e.stopPropagation();
+            openMobilePanel();
+          }}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700"
+        >
+          <FilterIcon />
+        </span>
+      </button>
+
+      <form
+        className={`mt-0 grid grid-cols-1 gap-2 md:mt-0 md:grid-cols-[1.6fr_1fr_auto_1.1fr_auto] md:items-stretch ${
+          mobileOpen ? "mt-3" : "hidden md:grid"
+        }`}
+        onSubmit={handleSubmit}
+      >
+        {mobileOpen && (
+          <div className="flex items-center justify-between md:hidden">
+            <p className="text-sm font-semibold text-gray-900">Busca tu oferta</p>
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-full px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100"
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
       <div className="min-w-0">
         <input
           id="destino"
@@ -282,9 +350,17 @@ export default function SearchForm({
         disabled={searching}
         className="h-12 w-full rounded-md bg-[#b0003a] px-8 text-sm font-semibold text-white transition hover:bg-[#930030] disabled:opacity-70 md:min-w-[170px]"
       >
-        {searching ? "Buscando…" : "Buscar"}
+        {searching ? (
+          "Buscando…"
+        ) : (
+          <>
+            <span className="md:hidden">Busca tu oferta</span>
+            <span className="hidden md:inline">Buscar</span>
+          </>
+        )}
       </button>
     </form>
+    </div>
   );
 }
 
@@ -351,6 +427,47 @@ function CounterButton({
     >
       {children}
     </button>
+  );
+}
+
+function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2.25}
+        d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
+      />
+    </svg>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M7 12h10M10 18h4"
+      />
+      <circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="12" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="11" cy="18" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
   );
 }
 

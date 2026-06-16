@@ -27,7 +27,23 @@ async function connectDb() {
     throw new Error("MONGODB_URI is not set in backend/.env");
   }
 
-  await mongoose.connect(uri);
+  try {
+    await mongoose.connect(uri);
+    process.env.DB_MODE = "mongo";
+  } catch (err) {
+    // Local dev fallback: if MongoDB isn't reachable, keep the API running
+    // using the JSON file store (see `models/Customer.js`).
+    process.env.DB_MODE = "json";
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(
+      [
+        "MongoDB not reachable; starting API in JSON DB mode.",
+        `MONGODB_URI=${uri}`,
+        `Error: ${msg}`,
+      ].join(" ")
+    );
+    return;
+  }
 
   await migrateFromOldDatabase();
 
