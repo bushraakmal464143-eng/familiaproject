@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { deleteOffer, getOfferById, upsertOffer } from "@/lib/offers-store";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
 import type { OfferRecord } from "@/lib/types";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -35,7 +36,7 @@ export async function PUT(request: Request, context: RouteContext) {
   const body = (await request.json()) as Partial<OfferRecord>;
   const gallery =
     Array.isArray(body.gallery) && body.gallery.length > 0
-      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, 59)
+      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, MAX_GALLERY_IMAGES)
       : undefined;
 
   const nightsOptions =

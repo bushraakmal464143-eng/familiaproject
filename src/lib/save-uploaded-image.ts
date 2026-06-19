@@ -1,15 +1,18 @@
 import { promises as fs } from "fs";
 import path from "path";
+import {
+  formatMaxImageSizeLabel,
+  MAX_IMAGE_BYTES,
+} from "@/lib/image-upload-limits";
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
-const MAX_BYTES = 5 * 1024 * 1024;
 
 export function validateImageFile(file: File): string | null {
   if (!(file instanceof File) || file.size === 0) {
     return "Archivo requerido";
   }
-  if (file.size > MAX_BYTES) {
-    return "Máximo 5 MB";
+  if (file.size > MAX_IMAGE_BYTES) {
+    return formatMaxImageSizeLabel();
   }
   const ext = path.extname(file.name).toLowerCase();
   if (!ALLOWED_EXTENSIONS.includes(ext)) {

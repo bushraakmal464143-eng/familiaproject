@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { formatMaxImageSizeLabel, MAX_IMAGE_BYTES } from "@/lib/image-upload-limits";
 
 type ImageUploadFieldProps = {
   value: string;
@@ -23,6 +24,11 @@ export default function ImageUploadField({
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError(`${file.name}: ${formatMaxImageSizeLabel()}`);
+      return;
+    }
 
     setError("");
     setUploading(true);

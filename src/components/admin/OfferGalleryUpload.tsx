@@ -2,6 +2,11 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import {
+  formatMaxImageSizeLabel,
+  MAX_IMAGE_BYTES,
+  MAX_OFFER_IMAGES,
+} from "@/lib/image-upload-limits";
 
 const DEFAULT_IMAGES = [
   "/offers/montana-1.svg",
@@ -10,8 +15,6 @@ const DEFAULT_IMAGES = [
   "/offers/montana-4.svg",
   "/offers/montana-5.svg",
 ];
-
-const MAX_IMAGES = 60;
 
 type OfferGalleryUploadProps = {
   images: string[];
@@ -33,19 +36,21 @@ export default function OfferGalleryUpload({
 
   const safe = useMemo(() => {
     const cleaned = images.map((s) => s.trim()).filter(Boolean);
-    return uniq(cleaned).slice(0, MAX_IMAGES);
+    return uniq(cleaned).slice(0, MAX_OFFER_IMAGES);
   }, [images]);
 
-  const canUploadMore = safe.length < MAX_IMAGES;
-  const remaining = Math.max(0, MAX_IMAGES - safe.length);
+  const canUploadMore = safe.length < MAX_OFFER_IMAGES;
+  const remaining = Math.max(0, MAX_OFFER_IMAGES - safe.length);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = Array.from(e.target.files ?? []);
     e.target.value = "";
     if (selected.length === 0) return;
 
-    if (safe.length + selected.length > MAX_IMAGES) {
-      setError(`Máximo ${MAX_IMAGES} imágenes por oferta. Te quedan ${remaining}.`);
+    if (safe.length + selected.length > MAX_OFFER_IMAGES) {
+      setError(
+        `Máximo ${MAX_OFFER_IMAGES} imágenes por oferta. Te quedan ${remaining}.`
+      );
       return;
     }
 
@@ -54,23 +59,50 @@ export default function OfferGalleryUpload({
 
     try {
       const urls: string[] = [];
+      const skipped: string[] = [];
+
       for (const file of selected) {
+        if (safe.length + urls.length >= MAX_OFFER_IMAGES) {
+          skipped.push(`${file.name}: límite de ${MAX_OFFER_IMAGES} imágenes alcanzado`);
+          continue;
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+          skipped.push(`${file.name}: ${formatMaxImageSizeLabel()}`);
+          continue;
+        }
+
         const form = new FormData();
         form.append("file", file);
         const res = await fetch(uploadUrl, { method: "POST", body: form });
         const data = (await res.json()) as { url?: string; error?: string };
         if (!res.ok || !data.url) {
-          setError(data.error ?? "Error al subir una imagen");
-          return;
+          skipped.push(`${file.name}: ${data.error ?? "error al subir"}`);
+          continue;
         }
         urls.push(data.url);
       }
 
-      const next = uniq([...safe, ...urls]).slice(0, MAX_IMAGES);
-      if (next.length !== safe.length + urls.length) {
+      if (urls.length === 0) {
+        setError(
+          skipped.length === 1
+            ? skipped[0]
+            : `No se pudo subir ninguna imagen. ${skipped.slice(0, 3).join(" · ")}`
+        );
+        return;
+      }
+
+      const next = uniq([...safe, ...urls]).slice(0, MAX_OFFER_IMAGES);
+      onChange(next);
+
+      if (skipped.length > 0) {
+        setError(
+          `${urls.length} imagen${urls.length === 1 ? "" : "es"} añadida${urls.length === 1 ? "" : "s"}. ` +
+            `Omitidas: ${skipped.slice(0, 3).join(" · ")}` +
+            (skipped.length > 3 ? ` (+${skipped.length - 3} más)` : "")
+        );
+      } else if (next.length !== safe.length + urls.length) {
         setError("Algunas imágenes repetidas se ignoraron (deben ser distintas).");
       }
-      onChange(next);
     } catch {
       setError("Error al subir las imágenes");
     } finally {
@@ -92,14 +124,14 @@ export default function OfferGalleryUpload({
   }
 
   function useDefaults() {
-    onChange(uniq([...DEFAULT_IMAGES, ...safe]).slice(0, MAX_IMAGES));
+    onChange(uniq([...DEFAULT_IMAGES, ...safe]).slice(0, MAX_OFFER_IMAGES));
   }
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-medium text-gray-700">
-          {safe.length}/{MAX_IMAGES} imágenes
+          {safe.length}/{MAX_OFFER_IMAGES} imágenes
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <label
@@ -132,8 +164,8 @@ export default function OfferGalleryUpload({
       </div>
 
       <p className="mt-2 text-xs text-gray-500">
-        Puedes subir hasta {MAX_IMAGES} fotos. La primera es la imagen principal
-        (aparece en la tarjeta y en la galería).
+        Puedes subir hasta {MAX_OFFER_IMAGES} fotos ({formatMaxImageSizeLabel()} cada una).
+        La primera es la imagen principal (aparece en la tarjeta y en la galería).
       </p>
 
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

@@ -126,16 +126,13 @@ export default function OfferGalleryMosaic({ title, images }: OfferGalleryMosaic
                 src={preview[4]}
                 alt=""
                 fill
-                className="object-cover"
+                className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 40vw"
               />
               <div className="absolute inset-0 bg-black/15 transition group-hover:bg-black/25" />
-              <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-900 shadow backdrop-blur">
                   Ver {total} fotos
-                </span>
-                <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-gray-700 shadow backdrop-blur">
-                  Galería
                 </span>
               </div>
             </button>

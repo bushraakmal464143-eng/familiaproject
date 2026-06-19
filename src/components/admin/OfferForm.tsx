@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OfferGalleryUpload from "@/components/admin/OfferGalleryUpload";
+import { MAX_OFFER_IMAGES } from "@/lib/image-upload-limits";
 import type { OfferCategory } from "@/lib/offers";
 import type { OfferRecord, OfferStatus } from "@/lib/types";
 
@@ -45,7 +46,7 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     const raw = [offer?.image, ...(offer?.gallery ?? [])].filter(Boolean) as string[];
     const unique = raw.filter((src, idx) => raw.indexOf(src) === idx);
     // New offers start with 5 placeholders; existing keep their images.
-    return unique.length > 0 ? unique.slice(0, 60) : defaults;
+    return unique.length > 0 ? unique.slice(0, MAX_OFFER_IMAGES) : defaults;
   })();
 
   const [title, setTitle] = useState(offer?.title ?? "");
@@ -100,7 +101,7 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
       return;
     }
     const mainImage = unique[0] ?? "/offers/cabin-style.png";
-    const gallery = unique.slice(1, 60);
+    const gallery = unique.slice(1, MAX_OFFER_IMAGES);
 
     const nightsOptions = nightsOptionsText
       .split(",")
@@ -269,7 +270,9 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className={labelClass}>Imágenes de la oferta (5)</label>
+          <label className={labelClass}>
+            Imágenes de la oferta (mín. 5, máx. {MAX_OFFER_IMAGES})
+          </label>
           <div className="mt-3">
             <OfferGalleryUpload
               images={images}

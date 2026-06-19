@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { addCampingPhoto } from "@/lib/campings-store";
+import {
+  formatMaxImageSizeLabel,
+  MAX_IMAGE_BYTES,
+} from "@/lib/image-upload-limits";
 import { getSessionSubject } from "@/lib/role-session";
 
 export async function POST(request: Request) {
@@ -15,8 +19,8 @@ export async function POST(request: Request) {
   if (!(file instanceof File) || file.size === 0) {
     return NextResponse.json({ error: "Archivo requerido" }, { status: 400 });
   }
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json({ error: "Máximo 5 MB" }, { status: 400 });
+  if (file.size > MAX_IMAGE_BYTES) {
+    return NextResponse.json({ error: formatMaxImageSizeLabel() }, { status: 400 });
   }
 
   const ext = path.extname(file.name) || ".jpg";

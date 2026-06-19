@@ -5,6 +5,7 @@ import {
   upsertOffer,
 } from "@/lib/offers-store";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
 import { cleanSubtitle } from "@/lib/clean-offer-text";
 import type { OfferRecord } from "@/lib/types";
 
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
 
   const gallery =
     Array.isArray(body.gallery) && body.gallery.length > 0
-      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, 59)
+      ? body.gallery.map((s) => String(s).trim()).filter(Boolean).slice(0, MAX_GALLERY_IMAGES)
       : undefined;
 
   const nightsOptions =
