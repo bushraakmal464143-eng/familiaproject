@@ -59,3 +59,52 @@ body {
 .campo-libre-calendar .rdp-disabled .rdp-day_button {
   color: #d1d5db;
 }
+
+/* Offer detail — calendar with per-date prices */
+.offer-price-calendar.rdp-root {
+  --rdp-accent-color: #ea580c;
+  --rdp-accent-background-color: #ffedd5;
+  --rdp-day-height: 52px;
+  --rdp-day-width: 52px;
+  --rdp-day_button-height: 52px;
+  --rdp-day_button-width: 100%;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.offer-price-calendar .rdp-month_grid {
+  display: table;
+  width: 100%;
+}
+
+.offer-price-calendar .rdp-weekdays,
+.offer-price-calendar .rdp-week {
+  display: table-row;
+}
+
+.offer-price-calendar .rdp-weekday,
+.offer-price-calendar .rdp-day {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px;
+}
+
+.offer-price-calendar .rdp-weekday {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.offer-price-calendar .rdp-day_button {
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+
+.offer-price-calendar .rdp-caption_label {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: #111827;
+}

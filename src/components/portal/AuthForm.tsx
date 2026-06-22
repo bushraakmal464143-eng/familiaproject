@@ -83,6 +83,7 @@ function AuthFormInner({
       const res = await fetch(apiPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(body),
       });
 

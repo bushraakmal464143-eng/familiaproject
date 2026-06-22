@@ -27,9 +27,11 @@ export async function createBooking(data: {
   guests: number;
   nights: number;
   pricePerNight: number;
+  totalAmount?: number;
 }): Promise<Booking> {
   const bookings = await getBookings();
-  const totalAmount = data.nights * data.guests * data.pricePerNight;
+  const totalAmount =
+    data.totalAmount ?? data.nights * data.guests * data.pricePerNight;
   const booking: Booking = {
     id: generateId("book", bookings),
     offerId: data.offerId,

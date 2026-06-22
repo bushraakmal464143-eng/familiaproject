@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import OfferGalleryMosaic from "@/components/OfferGalleryMosaic";
-import ReserveForm from "@/components/cuenta/ReserveForm";
+import OfferBookingPanel from "@/components/OfferBookingPanel";
 import { getOfferById, getPublicOffers } from "@/lib/offers-store";
 import { getCampingById, stripCampingSecrets } from "@/lib/campings-store";
 import { getSessionSubject } from "@/lib/role-session";
@@ -26,8 +25,6 @@ export default async function OfertaDetailPage({ params }: Props) {
   const accommodationLinkText =
     offer.accommodationLinkText?.trim() || "Ver alojamiento →";
   const mapLabel = offer.mapLabel?.trim() || `${offer.location}, ${offer.region}`;
-  const nightsOptions =
-    offer.nightsOptions?.length ? offer.nightsOptions : [1, 2, 3, 4, 5];
   const ctaTextTemplate =
     offer.ctaText?.trim() || "Ver fechas desde {price} €/persona";
   const ctaText = ctaTextTemplate.replaceAll("{price}", String(offer.priceFrom));
@@ -149,108 +146,14 @@ export default async function OfertaDetailPage({ params }: Props) {
         </div>
 
         <aside className="lg:col-span-4">
-          <div className="sticky top-6 space-y-4">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-lg font-extrabold text-gray-900">
-                    {offer.subtitle}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-600">
-                    <span aria-hidden className="mr-1">
-                      📍
-                    </span>
-                    {offer.location}
-                  </p>
-                  {offer.mealPlan && (
-                    <p className="mt-1 text-sm text-gray-600">
-                      <span aria-hidden className="mr-1">
-                        🍽️
-                      </span>
-                      {offer.mealPlan}
-                    </p>
-                  )}
-                </div>
-                <div className="rounded-xl bg-brand-cream px-3 py-2 text-right">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
-                    Desde
-                  </p>
-                  <p className="text-xl font-extrabold text-brand-accent">
-                    {offer.priceFrom}€
-                  </p>
-                  <p className="text-[11px] font-medium text-gray-600">
-                    /persona
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-5">
-                <label className="text-sm font-semibold text-gray-800">
-                  Duración
-                </label>
-                <select className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent">
-                  {nightsOptions.map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n === 1 ? "noche" : "noches"}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {offer.countdown && (
-                <div className="mt-5 rounded-xl bg-gray-50 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-medium text-gray-700">
-                      {offer.countdown}
-                    </p>
-                    <span className="text-[11px] font-semibold text-gray-600">
-                      {countdownProgress}%
-                    </span>
-                  </div>
-                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                    <div
-                      className="h-full rounded-full bg-brand-accent"
-                      style={{ width: `${countdownProgress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <button
-                type="button"
-                className="mt-5 w-full rounded-xl bg-brand-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2"
-              >
-                {ctaText}
-              </button>
-
-              <p className="mt-3 text-xs text-gray-500">
-                Precio orientativo. Confirmarás fechas y personas en el siguiente paso.
-              </p>
-            </div>
-
-            {customerId ? (
-              <ReserveForm offer={offer} />
-            ) : (
-              <div className="rounded-2xl border border-brand-accent/30 bg-orange-50 p-6">
-                <p className="text-sm text-gray-800">
-                  Inicia sesión para contratar y pagar esta oferta.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <Link
-                    href={`/cuenta/login?from=/ofertas/${offer.id}`}
-                    className="rounded-lg bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700"
-                  >
-                    Iniciar sesión
-                  </Link>
-                  <Link
-                    href="/cuenta/registro"
-                    className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-white"
-                  >
-                    Crear cuenta
-                  </Link>
-                </div>
-              </div>
-            )}
+          <div className="sticky top-6">
+            <OfferBookingPanel
+              offer={offer}
+              customerId={customerId}
+              ctaText={ctaText}
+              countdown={offer.countdown}
+              countdownProgress={countdownProgress}
+            />
           </div>
         </aside>
       </div>

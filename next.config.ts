@@ -7,18 +7,6 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         {
-          source: "/api/cuenta/register",
-          destination: `${backendUrl}/api/cuenta/register`,
-        },
-        {
-          source: "/api/cuenta/login",
-          destination: `${backendUrl}/api/cuenta/login`,
-        },
-        {
-          source: "/api/cuenta/logout",
-          destination: `${backendUrl}/api/cuenta/logout`,
-        },
-        {
           source: "/api/camping/register",
           destination: `${backendUrl}/api/camping/register`,
         },

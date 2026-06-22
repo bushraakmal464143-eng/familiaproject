@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import PayBookingButton from "@/components/cuenta/PayBookingButton";
+import PaymentCheckout from "@/components/cuenta/PaymentCheckout";
 import { getBookingById } from "@/lib/bookings-store";
 import { getOfferById } from "@/lib/offers-store";
 import { getSessionSubject } from "@/lib/role-session";
@@ -47,30 +46,17 @@ export default async function PagoPage({ searchParams }: PagoPageProps) {
             <strong>Personas:</strong> {booking.guests} · <strong>Noches:</strong>{" "}
             {booking.nights}
           </p>
-          <p className="text-2xl font-bold text-brand-accent pt-2">
-            Total: {booking.totalAmount} €
-          </p>
         </div>
 
         <p className="mt-4 text-sm text-gray-500">
           Simulación de pago — conecta aquí Stripe o PayPal en producción.
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          {booking.status === "pending" ? (
-            <PayBookingButton bookingId={booking.id} />
-          ) : (
-            <span className="rounded-md bg-brand-green/10 px-5 py-2.5 text-sm font-semibold text-brand-green">
-              Pago completado
-            </span>
-          )}
-          <Link
-            href="/cuenta"
-            className="rounded-md border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Mis reservas
-          </Link>
-        </div>
+        <PaymentCheckout
+          bookingId={booking.id}
+          totalAmount={booking.totalAmount}
+          status={booking.status}
+        />
       </div>
     </section>
   );

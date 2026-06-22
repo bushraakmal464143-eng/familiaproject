@@ -28,6 +28,11 @@ export async function POST(request: Request) {
     checkIn?: string;
     checkOut?: string;
     guests?: number;
+    adults?: number;
+    children?: number;
+    childAges?: number[];
+    pricePerNight?: number;
+    totalAmount?: number;
   };
 
   const customer = await getCustomerById(customerId);
@@ -38,13 +43,41 @@ export async function POST(request: Request) {
 
   const checkIn = body.checkIn ?? "";
   const checkOut = body.checkOut ?? "";
-  const guests = Math.max(1, Number(body.guests) || 1);
+  const adults = Math.max(1, Number(body.adults) || 0);
+  const children = Math.max(0, Number(body.children) || 0);
+  const guests =
+    body.guests != null
+      ? Math.max(1, Number(body.guests) || 1)
+      : Math.max(1, adults + children);
+  const pricePerNight =
+    body.pricePerNight != null && body.pricePerNight > 0
+      ? body.pricePerNight
+      : offer.priceFrom;
   const start = new Date(checkIn);
   const end = new Date(checkOut);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     return NextResponse.json({ error: "Fechas no válidas" }, { status: 400 });
   }
+
+  if (children > 0) {
+    const ages = Array.isArray(body.childAges) ? body.childAges : [];
+    const agesValid =
+      ages.length === children &&
+      ages.every((age) => Number.isInteger(age) && age >= 0 && age <= 17);
+    if (!agesValid) {
+      return NextResponse.json(
+        { error: "Indica la edad de cada niño (0–17 años)." },
+        { status: 400 }
+      );
+    }
+  }
+
   const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+  const totalAmount =
+    body.totalAmount != null && body.totalAmount > 0
+      ? body.totalAmount
+      : undefined;
 
   const booking = await createBooking({
     offerId: offer.id,
@@ -56,7 +89,8 @@ export async function POST(request: Request) {
     checkOut,
     guests,
     nights,
-    pricePerNight: offer.priceFrom,
+    pricePerNight,
+    totalAmount,
   });
 
   return NextResponse.json(booking, { status: 201 });
