@@ -34,6 +34,7 @@ export default async function AdminOffersPage() {
                 <th className="px-4 py-3">Oferta</th>
                 <th className="px-4 py-3">Categoría</th>
                 <th className="px-4 py-3">Precio</th>
+                <th className="px-4 py-3">Alojamientos</th>
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
@@ -70,6 +71,10 @@ export default async function AdminOffersPage() {
                     {categoryLabel[offer.category] ?? offer.category}
                   </td>
                   <td className="px-4 py-3 font-medium">{offer.priceFrom} €</td>
+                  <td className="px-4 py-3 text-gray-600">
+                    {offer.accommodations?.filter((u) => u.enabled).length ?? 0}
+                    {offer.accommodations?.length ? "" : " (auto)"}
+                  </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-3">
                       <Link

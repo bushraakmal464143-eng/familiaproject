@@ -7,6 +7,7 @@ import {
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
 import { cleanSubtitle } from "@/lib/clean-offer-text";
+import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
 import type { OfferRecord } from "@/lib/types";
 
 async function requireAdmin() {
@@ -49,6 +50,13 @@ export async function POST(request: Request) {
       ? Math.max(0, Math.min(100, Number(body.countdownProgress)))
       : undefined;
 
+  const image = body.image?.trim() ?? "/offers/cabin-style.png";
+  const priceFrom = Number(body.priceFrom) || 0;
+  const accommodations = sanitizeOfferAccommodations(body.accommodations, {
+    priceFrom,
+    image,
+  });
+
   const offer: OfferRecord = {
     id: body.id?.trim() || generateOfferId(existing),
     campingId: body.campingId?.trim() || "camp_1",
@@ -62,8 +70,8 @@ export async function POST(request: Request) {
       : [],
     description: body.description?.trim() ?? "",
     travelDates: body.travelDates?.trim() ?? "",
-    priceFrom: Number(body.priceFrom) || 0,
-    image: body.image?.trim() ?? "/offers/cabin-style.png",
+    priceFrom,
+    image,
     gallery,
     badge: body.badge?.trim() || undefined,
     countdown: body.countdown?.trim() || undefined,
@@ -72,6 +80,7 @@ export async function POST(request: Request) {
     ctaText: body.ctaText?.trim() || undefined,
     accommodationName: body.accommodationName?.trim() || undefined,
     accommodationLinkText: body.accommodationLinkText?.trim() || undefined,
+    accommodations,
     mapLabel: body.mapLabel?.trim() || undefined,
     category: body.category ?? "new",
     status: body.status ?? "active",

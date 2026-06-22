@@ -61,7 +61,7 @@ export default function PaymentCheckout({
     <>
       {showTotal && (
         <div className="mt-6 rounded-xl border border-brand-accent/30 bg-orange-50 px-5 py-4">
-          <p className="text-sm font-medium text-gray-700">Total a pagar</p>
+          <p className="text-sm font-medium text-gray-700">Total general</p>
           <p className="mt-1 text-3xl font-extrabold text-brand-accent">
             {totalAmount} €
           </p>

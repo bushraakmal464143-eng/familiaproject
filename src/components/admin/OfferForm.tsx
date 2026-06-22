@@ -3,9 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OfferGalleryUpload from "@/components/admin/OfferGalleryUpload";
+import OfferAccommodationsEditor, {
+  validateOfferAccommodations,
+} from "@/components/admin/OfferAccommodationsEditor";
 import { MAX_OFFER_IMAGES } from "@/lib/image-upload-limits";
+import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
 import type { OfferCategory } from "@/lib/offers";
-import type { OfferRecord, OfferStatus } from "@/lib/types";
+import type { OfferAccommodationUnit, OfferRecord, OfferStatus } from "@/lib/types";
 
 const categories: { value: Exclude<OfferCategory, "all">; label: string }[] = [
   { value: "new", label: "Novedades" },
@@ -87,6 +91,9 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
   );
   const [status, setStatus] = useState<OfferStatus>(offer?.status ?? "active");
   const [featured, setFeatured] = useState(offer?.featured ?? false);
+  const [accommodations, setAccommodations] = useState<OfferAccommodationUnit[]>(
+    offer?.accommodations ?? []
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -120,6 +127,18 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     const progress =
       Number.isFinite(progressNum) ? Math.max(0, Math.min(100, progressNum)) : 75;
 
+    const accommodationError = validateOfferAccommodations(accommodations);
+    if (accommodationError) {
+      setSaving(false);
+      setError(accommodationError);
+      return;
+    }
+
+    const sanitizedAccommodations = sanitizeOfferAccommodations(accommodations, {
+      priceFrom: Number(priceFrom) || 0,
+      image: mainImage,
+    });
+
     const payload = {
       title,
       subtitle,
@@ -139,6 +158,7 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
       ctaText: ctaText.trim() || undefined,
       accommodationName: accommodationName.trim() || undefined,
       accommodationLinkText: accommodationLinkText.trim() || undefined,
+      accommodations: sanitizedAccommodations,
       mapLabel: mapLabel.trim() || undefined,
       campingId,
       category,
@@ -342,6 +362,14 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
             className={inputClass}
             value={accommodationLinkText}
             onChange={(e) => setAccommodationLinkText(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <OfferAccommodationsEditor
+            units={accommodations}
+            onChange={setAccommodations}
+            defaultImage={images[0] ?? "/offers/cabin-style.png"}
+            defaultPrice={Number(priceFrom) || 0}
           />
         </div>
         <div className="sm:col-span-2">

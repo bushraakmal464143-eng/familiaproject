@@ -1,5 +1,5 @@
 import { readJson, writeJson, generateId } from "@/lib/json-store";
-import type { Booking, BookingStatus } from "@/lib/types";
+import type { Booking, BookingStatus, TravelerDetails } from "@/lib/types";
 
 const FILE = "bookings.json";
 
@@ -28,6 +28,9 @@ export async function createBooking(data: {
   nights: number;
   pricePerNight: number;
   totalAmount?: number;
+  accommodationId?: string;
+  accommodationName?: string;
+  travelerDetails?: TravelerDetails;
 }): Promise<Booking> {
   const bookings = await getBookings();
   const totalAmount =
@@ -45,6 +48,9 @@ export async function createBooking(data: {
     nights: data.nights,
     pricePerNight: data.pricePerNight,
     totalAmount,
+    accommodationId: data.accommodationId,
+    accommodationName: data.accommodationName,
+    travelerDetails: data.travelerDetails,
     status: "pending",
     createdAt: new Date().toISOString(),
   };

@@ -46,6 +46,11 @@ export default async function PagoPage({ searchParams }: PagoPageProps) {
             <strong>Personas:</strong> {booking.guests} · <strong>Noches:</strong>{" "}
             {booking.nights}
           </p>
+          {booking.accommodationName && (
+            <p>
+              <strong>Alojamiento:</strong> {booking.accommodationName}
+            </p>
+          )}
         </div>
 
         <p className="mt-4 text-sm text-gray-500">

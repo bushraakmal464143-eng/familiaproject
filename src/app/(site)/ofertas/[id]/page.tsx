@@ -2,10 +2,15 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import OfferGalleryMosaic from "@/components/OfferGalleryMosaic";
-import OfferBookingPanel from "@/components/OfferBookingPanel";
+import {
+  OfferBookingAccommodationSection,
+  OfferBookingCheckoutSection,
+  OfferBookingProvider,
+  OfferBookingSidebar,
+} from "@/components/OfferBookingFlow";
 import { getOfferById, getPublicOffers } from "@/lib/offers-store";
 import { getCampingById, stripCampingSecrets } from "@/lib/campings-store";
-import { getSessionSubject } from "@/lib/role-session";
+import { getCurrentCustomer } from "@/lib/current-customer";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +23,7 @@ export default async function OfertaDetailPage({ params }: Props) {
   if (!offer || !publicOffers.some((o) => o.id === id)) notFound();
 
   const camping = await getCampingById(offer.campingId);
-  const customerId = await getSessionSubject("customer");
+  const customer = await getCurrentCustomer();
   const accommodationName =
     offer.accommodationName?.trim() ||
     (camping ? stripCampingSecrets(camping).name : offer.subtitle);
@@ -52,6 +57,14 @@ export default async function OfertaDetailPage({ params }: Props) {
   })();
 
   return (
+    <OfferBookingProvider
+      offer={offer}
+      customer={customer}
+      ctaText={ctaText}
+      countdown={offer.countdown}
+      countdownProgress={countdownProgress}
+      galleryImages={allImages}
+    >
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -147,9 +160,9 @@ export default async function OfertaDetailPage({ params }: Props) {
 
         <aside className="lg:col-span-4">
           <div className="sticky top-6">
-            <OfferBookingPanel
+            <OfferBookingSidebar
               offer={offer}
-              customerId={customerId}
+              customer={customer}
               ctaText={ctaText}
               countdown={offer.countdown}
               countdownProgress={countdownProgress}
@@ -157,6 +170,16 @@ export default async function OfertaDetailPage({ params }: Props) {
           </div>
         </aside>
       </div>
+
+      <div id="booking-flow" className="pb-8">
+        <OfferBookingAccommodationSection offer={offer} />
+        <OfferBookingCheckoutSection
+          offer={offer}
+          customer={customer}
+          galleryImages={allImages}
+        />
+      </div>
     </div>
+    </OfferBookingProvider>
   );
 }

@@ -4,6 +4,18 @@ export type OfferStatus = "active" | "draft" | "inactive";
 export type CampingStatus = "pending" | "active" | "suspended";
 export type BookingStatus = "pending" | "paid" | "cancelled";
 
+export type TravelerDetails = {
+  firstName: string;
+  lastName: string;
+  country: string;
+  documentId: string;
+  email: string;
+  phoneCountryCode: string;
+  phone: string;
+  requestInvoice: boolean;
+  roomRequests?: string;
+};
+
 export type Camping = {
   id: string;
   name: string;
@@ -45,6 +57,19 @@ export type Customer = {
   createdAt: string;
 };
 
+/** Bungalow / chalet unit configured per offer in admin */
+export type OfferAccommodationUnit = {
+  id: string;
+  name: string;
+  image: string;
+  infoText: string;
+  pricePerPerson: number;
+  maxGuests: number;
+  roomsLeft?: number;
+  refundable: boolean;
+  enabled: boolean;
+};
+
 export type OfferRecord = {
   id: string;
   campingId: string;
@@ -66,6 +91,7 @@ export type OfferRecord = {
   ctaText?: string; // supports {price}
   accommodationName?: string; // overrides camping/subtitle in boxes
   accommodationLinkText?: string; // e.g. "Ver alojamiento →"
+  accommodations?: OfferAccommodationUnit[];
   mapLabel?: string; // text shown in map section placeholder
   category: Exclude<OfferCategory, "all">;
   status: OfferStatus;
@@ -85,6 +111,9 @@ export type Booking = {
   nights: number;
   pricePerNight: number;
   totalAmount: number;
+  accommodationId?: string;
+  accommodationName?: string;
+  travelerDetails?: TravelerDetails;
   status: BookingStatus;
   createdAt: string;
   paidAt?: string;

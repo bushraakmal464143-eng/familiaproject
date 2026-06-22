@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { deleteOffer, getOfferById, upsertOffer } from "@/lib/offers-store";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
+import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
 import type { OfferRecord } from "@/lib/types";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -53,17 +54,26 @@ export async function PUT(request: Request, context: RouteContext) {
       ? Math.max(0, Math.min(100, Number(body.countdownProgress)))
       : undefined;
 
+  const image = body.image?.trim() ?? current.image;
+  const priceFrom = Number(body.priceFrom ?? current.priceFrom);
+  const accommodations =
+    body.accommodations !== undefined
+      ? sanitizeOfferAccommodations(body.accommodations, { priceFrom, image })
+      : current.accommodations;
+
   const offer: OfferRecord = {
     ...current,
     ...body,
     id,
-    priceFrom: Number(body.priceFrom ?? current.priceFrom),
+    priceFrom,
+    image,
     highlights: Array.isArray(body.highlights)
       ? body.highlights.filter(Boolean)
       : current.highlights,
     gallery: gallery ?? current.gallery,
     nightsOptions: nightsOptions ?? current.nightsOptions,
     countdownProgress: countdownProgress ?? current.countdownProgress,
+    accommodations,
     featured:
       body.featured !== undefined ? Boolean(body.featured) : current.featured,
   };

@@ -11,6 +11,7 @@ import {
   getOfferDatePrice,
   getOfferMonthTabs,
 } from "@/lib/offer-date-prices";
+import { type AccommodationBookingDraft } from "@/components/AccommodationPicker";
 import type { OfferRecord } from "@/lib/types";
 
 type OfferBookingPanelProps = {
@@ -19,6 +20,7 @@ type OfferBookingPanelProps = {
   ctaText: string;
   countdown?: string;
   countdownProgress: number;
+  onDatesConfirmed: (draft: AccommodationBookingDraft) => void;
 };
 
 function startOfToday() {
@@ -54,6 +56,7 @@ export default function OfferBookingPanel({
   ctaText,
   countdown,
   countdownProgress,
+  onDatesConfirmed,
 }: OfferBookingPanelProps) {
   const router = useRouter();
   const monthTabs = useMemo(() => getOfferMonthTabs(offer), [offer]);
@@ -66,7 +69,6 @@ export default function OfferBookingPanel({
   const [children, setChildren] = useState(0);
   const [childAges, setChildAges] = useState<(number | null)[]>([]);
   const [ageError, setAgeError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const stayPricing =
@@ -143,7 +145,7 @@ export default function OfferBookingPanel({
     setDateRange(range);
   }
 
-  async function handleContinue() {
+  function handleContinue() {
     setError(null);
 
     if (!dateRange?.from || !dateRange?.to || !stayPricing?.allAvailable) {
@@ -164,33 +166,15 @@ export default function OfferBookingPanel({
       return;
     }
 
-    setLoading(true);
-    const res = await fetch("/api/cuenta/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        offerId: offer.id,
-        checkIn,
-        checkOut,
-        guests,
-        adults,
-        children,
-        childAges: children > 0 ? childAges.filter((a): a is number => a !== null) : undefined,
-        pricePerNight: stayPricing.pricePerNight,
-        totalAmount:
-          stayPricing.nightlyPrices.reduce((sum, p) => sum + p, 0) * guests,
-      }),
+    onDatesConfirmed({
+      checkIn,
+      checkOut,
+      nights: stayPricing.nights,
+      adults,
+      children,
+      childAges: childAges.filter((a): a is number => a !== null),
+      guests,
     });
-    setLoading(false);
-
-    if (!res.ok) {
-      const data = (await res.json()) as { error?: string };
-      setError(data.error ?? "No se pudo crear la reserva");
-      return;
-    }
-
-    const booking = (await res.json()) as { id: string };
-    router.push(`/pago?booking=${booking.id}`);
   }
 
   return (
@@ -453,14 +437,9 @@ export default function OfferBookingPanel({
           <button
             type="button"
             onClick={handleContinue}
-            disabled={loading}
             className="mt-5 w-full rounded-xl bg-brand-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:opacity-50"
           >
-            {loading
-              ? "Reservando…"
-              : customerId
-                ? "Continuar al pago"
-                : "Iniciar sesión para reservar"}
+            {customerId ? "Continuar" : "Iniciar sesión para reservar"}
           </button>
 
           <button

@@ -5,6 +5,7 @@ import { getCampings } from "@/lib/campings-store";
 import { campingIdByOfferIndex } from "@/lib/seed-data";
 import { revalidateOfferPages } from "@/lib/revalidate-offers";
 import type { OfferRecord, OfferStatus } from "@/lib/types";
+import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
 
 const FILE = "offers.json";
 
@@ -54,6 +55,10 @@ function migrateLegacyOffer(
       typeof raw.accommodationLinkText === "string"
         ? raw.accommodationLinkText
         : undefined,
+    accommodations: sanitizeOfferAccommodations(raw.accommodations, {
+      priceFrom: Number(raw.priceFrom) || 0,
+      image: String(raw.image ?? "/offers/cabin-style.png"),
+    }),
     mapLabel: typeof raw.mapLabel === "string" ? raw.mapLabel : undefined,
     category: safeCategory,
     status: (raw.status as OfferStatus) ?? "active",

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { TravelerDetails } from "@/lib/types";
 import { createBooking, getBookings } from "@/lib/bookings-store";
 import { getOfferById } from "@/lib/offers-store";
 import { getCustomerById } from "@/lib/customers-store";
@@ -33,6 +34,9 @@ export async function POST(request: Request) {
     childAges?: number[];
     pricePerNight?: number;
     totalAmount?: number;
+    accommodationId?: string;
+    accommodationName?: string;
+    travelerDetails?: TravelerDetails;
   };
 
   const customer = await getCustomerById(customerId);
@@ -74,6 +78,20 @@ export async function POST(request: Request) {
 
   const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
+  const traveler = body.travelerDetails;
+  if (
+    !traveler?.firstName?.trim() ||
+    !traveler?.lastName?.trim() ||
+    !traveler?.documentId?.trim() ||
+    !traveler?.email?.trim() ||
+    !traveler?.phone?.trim()
+  ) {
+    return NextResponse.json(
+      { error: "Completa los datos del viajero principal." },
+      { status: 400 }
+    );
+  }
+
   const totalAmount =
     body.totalAmount != null && body.totalAmount > 0
       ? body.totalAmount
@@ -83,14 +101,27 @@ export async function POST(request: Request) {
     offerId: offer.id,
     campingId: offer.campingId,
     customerId,
-    customerName: customer.name,
-    customerEmail: customer.email,
+    customerName: `${traveler.firstName.trim()} ${traveler.lastName.trim()}`,
+    customerEmail: traveler.email.trim(),
     checkIn,
     checkOut,
     guests,
     nights,
     pricePerNight,
     totalAmount,
+    accommodationId: body.accommodationId,
+    accommodationName: body.accommodationName,
+    travelerDetails: {
+      firstName: traveler.firstName.trim(),
+      lastName: traveler.lastName.trim(),
+      country: traveler.country?.trim() || "España",
+      documentId: traveler.documentId.trim(),
+      email: traveler.email.trim(),
+      phoneCountryCode: traveler.phoneCountryCode?.trim() || "+34",
+      phone: traveler.phone.trim(),
+      requestInvoice: Boolean(traveler.requestInvoice),
+      roomRequests: traveler.roomRequests?.trim() || undefined,
+    },
   });
 
   return NextResponse.json(booking, { status: 201 });
