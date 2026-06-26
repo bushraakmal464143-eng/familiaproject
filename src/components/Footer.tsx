@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import type { SiteBranding } from "@/lib/branding";
-import { SITE_NAME } from "@/lib/site";
 
 const footerSections = [
   {
@@ -32,7 +31,6 @@ type FooterProps = {
 };
 
 export default function Footer({ branding }: FooterProps) {
-  const siteName = branding?.siteName ?? SITE_NAME;
   const footerText =
     branding?.footerText ??
     "Reserva campings, glamping y parques vacacionales en España.";
@@ -73,13 +71,6 @@ export default function Footer({ branding }: FooterProps) {
               </ul>
             </div>
           ))}
-        </div>
-
-        <div className="mt-10 border-t border-green-900 pt-8">
-          <p className="text-center text-sm text-green-200 sm:text-left">
-            &copy; {new Date().getFullYear()} {siteName}. Todos los derechos
-            reservados.
-          </p>
         </div>
       </div>
     </footer>

@@ -163,7 +163,7 @@ export default function AccommodationPicker({
               type="button"
               onClick={onContinue}
               disabled={!selected || loading}
-              className="w-full rounded-xl bg-[#b0003a] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#930030] disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-brand-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Cargando…" : "Continuar"}
             </button>

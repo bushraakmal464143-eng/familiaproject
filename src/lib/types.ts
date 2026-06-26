@@ -92,7 +92,9 @@ export type OfferRecord = {
   accommodationName?: string; // overrides camping/subtitle in boxes
   accommodationLinkText?: string; // e.g. "Ver alojamiento →"
   accommodations?: OfferAccommodationUnit[];
-  mapLabel?: string; // text shown in map section placeholder
+  mapLabel?: string;
+  mapLat?: number;
+  mapLng?: number;
   category: Exclude<OfferCategory, "all">;
   status: OfferStatus;
   featured?: boolean;

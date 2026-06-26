@@ -18,49 +18,54 @@ export default async function CampingVentasPage() {
       <p className="my-t text-gray-600">{paid.length} Ventas cobradas .{" "}{paid.reduce((s, b) => s + b.totalAmount, 0)}€ en total
       </p>
 
-      <div className="mt-8 overflow-hidden rounded-xl border-gray-200 bg-white shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-500">
-            <tr>
-              <th className="px-4 py-3">cliente</th>
-              <th className="px-4 py-3">Fechas</th>
-              <th className="px-4 py-3">Importe</th>
-              <th className="px-4 py-3">Estado</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {bookings.map((b) => (
-              <tr key={b.id}>
-                <td className="px-4 py-3">
-                  <p className="font-medium">{b.customerName} </p>
-                  <p className="text-xs">{b.customerEmail} </p>
-                </td>
-                <td className="px-4 py-3 text-gray-600">
-                  {b.checkIn} → {b.checkOut}
-                  <br />
-                  <span className="text-xs">
-                    {b.guests} pers. · {b.nights} noches</span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className={
-                    b.status === "paid" 
-                    ? 
-                    "text-brand-green" 
-                    :b.status === "pending" 
-                    ?
-                     "text-brand-accent": 
-                    "text-gray-500"
-                  }
-                  >
-                    {formatBookingStatus(b.status)}
-                  </span>
-                </td>
+      <div className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Cliente</th>
+                <th className="px-4 py-3 font-medium">Fechas</th>
+                <th className="px-4 py-3 font-medium">Importe</th>
+                <th className="px-4 py-3 font-medium">Estado</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {bookings.length === 0 && ( 
-          <p className="px-4 py-12 text-center text-gray-500">Sin reservas todavis.</p>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {bookings.map((b) => (
+                <tr key={b.id} className="hover:bg-gray-50/80">
+                  <td className="px-4 py-3 align-middle">
+                    <p className="font-medium text-gray-900">{b.customerName}</p>
+                    <p className="text-xs text-gray-500">{b.customerEmail}</p>
+                  </td>
+                  <td className="px-4 py-3 align-middle text-gray-700">
+                    <span className="whitespace-nowrap">{b.checkIn} → {b.checkOut}</span>
+                    <br />
+                    <span className="text-xs text-gray-500">
+                      {b.guests} pers. · {b.nights} noches
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 align-middle font-medium text-gray-900">
+                    {b.totalAmount} €
+                  </td>
+                  <td className="px-4 py-3 align-middle">
+                    <span
+                      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        b.status === "paid"
+                          ? "bg-green-100 text-brand-green"
+                          : b.status === "pending"
+                            ? "bg-orange-100 text-brand-accent"
+                            : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {formatBookingStatus(b.status)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {bookings.length === 0 && (
+          <p className="px-4 py-12 text-center text-gray-500">Sin reservas todavía.</p>
         )}
       </div>
     </div>

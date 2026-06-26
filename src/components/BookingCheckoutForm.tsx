@@ -327,7 +327,7 @@ export default function BookingCheckoutForm({
             <button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-[#b0003a] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#930030] disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl bg-brand-accent px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Confirmando reserva…" : "Confirmar reserva"}
             </button>

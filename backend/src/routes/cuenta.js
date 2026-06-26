@@ -1,11 +1,26 @@
 const express = require("express");
 const Customer = require("../models/Customer");
+const { verifyAdminCredentials, getAdminEmail } = require("../utils/adminAuth");
+const { setAdminCookie, clearAdminCookie } = require("../utils/adminSession");
 const { hashPassword, verifyPassword } = require("../utils/password");
 const { isStrongPassword, STRONG_PASSWORD_MESSAGE } = require("../utils/strongPassword");
-const { setRoleCookie, clearRoleCookie } = require("../utils/session");
+const {
+  setRoleCookie,
+  clearRoleCookie,
+  getCustomerIdFromRequest,
+} = require("../utils/session");
 const { syncCustomerToJson, generateCustomerId } = require("../utils/jsonSync");
 
 const router = express.Router();
+
+function stripCustomer(customer) {
+  return {
+    id: customer.id,
+    name: customer.name,
+    email: customer.email,
+    createdAt: customer.createdAt,
+  };
+}
 
 router.post("/register", async (req, res) => {
   try {
@@ -19,6 +34,10 @@ router.post("/register", async (req, res) => {
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: "Email no válido." });
+    }
+
+    if (email === getAdminEmail()) {
+      return res.status(400).json({ error: "Este email está reservado para administración." });
     }
 
     if (!isStrongPassword(password)) {
@@ -44,14 +63,15 @@ router.post("/register", async (req, res) => {
 
     await syncCustomerToJson(customer);
 
-    console.log(`Registered: ${customer.email} → familiaproject.customers (${customer.id})`);
-
     setRoleCookie(res, "customer", customer.id);
-    return res.json({
+    return res.status(201).json({
       ok: true,
-      user: { id: customer.id, name: customer.name, email: customer.email },
+      user: stripCustomer(customer),
     });
   } catch (err) {
+    if (err?.code === 11000) {
+      return res.status(409).json({ error: "Ya existe una cuenta con este email." });
+    }
     console.error("Register error:", err);
     return res.status(500).json({ error: "Error al crear la cuenta." });
   }
@@ -66,8 +86,17 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Email y contraseña son obligatorios." });
     }
 
+    if (verifyAdminCredentials(email, password)) {
+      setAdminCookie(res);
+      return res.json({
+        ok: true,
+        redirect: "/admin",
+        role: "admin",
+      });
+    }
+
     const customer = await Customer.findOne({ email });
-    if (!customer || !verifyPassword(password, customer.passwordHash)) {
+    if (!customer?.passwordHash || !verifyPassword(password, customer.passwordHash)) {
       return res.status(401).json({ error: "Email o contraseña incorrectos." });
     }
 
@@ -75,7 +104,7 @@ router.post("/login", async (req, res) => {
     setRoleCookie(res, "customer", customer.id);
     return res.json({
       ok: true,
-      user: { id: customer.id, name: customer.name, email: customer.email },
+      user: stripCustomer(customer),
     });
   } catch (err) {
     console.error("Login error:", err);
@@ -83,9 +112,29 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", (_req, res) => {
+router.post("/logout", (req, res) => {
   clearRoleCookie(res, "customer");
+  clearAdminCookie(res);
   return res.json({ ok: true });
+});
+
+router.get("/me", async (req, res) => {
+  try {
+    const customerId = getCustomerIdFromRequest(req);
+    if (!customerId) {
+      return res.status(401).json({ error: "No autorizado" });
+    }
+
+    const customer = await Customer.findOne({ id: customerId });
+    if (!customer) {
+      return res.status(401).json({ error: "No autorizado" });
+    }
+
+    return res.json({ user: stripCustomer(customer) });
+  } catch (err) {
+    console.error("Me error:", err);
+    return res.status(500).json({ error: "Error al obtener la sesión." });
+  }
 });
 
 module.exports = router;

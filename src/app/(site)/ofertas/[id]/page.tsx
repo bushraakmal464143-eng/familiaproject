@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import ShareButton from "@/components/ShareButton";
+import OfferLocationMap from "@/components/OfferLocationMap";
 import OfferGalleryMosaic from "@/components/OfferGalleryMosaic";
 import {
   OfferBookingAccommodationSection,
   OfferBookingCheckoutSection,
   OfferBookingProvider,
   OfferBookingSidebar,
+  AccommodationScrollLink,
 } from "@/components/OfferBookingFlow";
 import { getOfferById, getPublicOffers } from "@/lib/offers-store";
 import { getCampingById, stripCampingSecrets } from "@/lib/campings-store";
@@ -29,7 +30,6 @@ export default async function OfertaDetailPage({ params }: Props) {
     (camping ? stripCampingSecrets(camping).name : offer.subtitle);
   const accommodationLinkText =
     offer.accommodationLinkText?.trim() || "Ver alojamiento →";
-  const mapLabel = offer.mapLabel?.trim() || `${offer.location}, ${offer.region}`;
   const ctaTextTemplate =
     offer.ctaText?.trim() || "Ver fechas desde {price} €/persona";
   const ctaText = ctaTextTemplate.replaceAll("{price}", String(offer.priceFrom));
@@ -66,23 +66,18 @@ export default async function OfertaDetailPage({ params }: Props) {
       galleryImages={allImages}
     >
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-            {offer.title}
-          </h1>
-          {camping && (
-            <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold text-brand-forest">
-                {stripCampingSecrets(camping).name}
-              </span>{" "}
-              · {offer.location}, {offer.region}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <ShareButton title={offer.title} />
-        </div>
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+          {offer.title}
+        </h1>
+        {camping && (
+          <p className="mt-2 text-sm text-gray-600">
+            <span className="font-semibold text-brand-forest">
+              {stripCampingSecrets(camping).name}
+            </span>{" "}
+            · {offer.location}, {offer.region}
+          </p>
+        )}
       </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-12">
@@ -116,18 +111,22 @@ export default async function OfertaDetailPage({ params }: Props) {
                   )}
                 </div>
               </div>
-              <span className="text-sm font-medium text-brand-accent">
+              <AccommodationScrollLink>
                 {accommodationLinkText}
-              </span>
+              </AccommodationScrollLink>
             </div>
           </section>
 
           <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-bold text-gray-900">¿Dónde está?</h2>
-            <div className="mt-4 overflow-hidden rounded-xl bg-gray-100">
-              <div className="flex h-40 items-center justify-center text-sm text-gray-500">
-                Mapa (próximamente) · {mapLabel}
-              </div>
+            <div className="mt-4">
+              <OfferLocationMap
+                mapLabel={offer.mapLabel}
+                location={offer.location}
+                region={offer.region}
+                mapLat={offer.mapLat}
+                mapLng={offer.mapLng}
+              />
             </div>
           </section>
 
@@ -159,7 +158,7 @@ export default async function OfertaDetailPage({ params }: Props) {
         </div>
 
         <aside className="lg:col-span-4">
-          <div className="sticky top-6">
+          <div id="offer-booking-panel" className="sticky top-6">
             <OfferBookingSidebar
               offer={offer}
               customer={customer}

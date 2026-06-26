@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { getPartnerContacts } from "@/lib/partner-contacts-store";
 import { getAdminStats } from "@/lib/stats";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default async function AdminDashboardPage() {
-  const stats = await getAdminStats();
+  const [stats, partnerContacts] = await Promise.all([
+    getAdminStats(),
+    getPartnerContacts(),
+  ]);
 
   return (
     <div>
@@ -41,6 +47,61 @@ export default async function AdminDashboardPage() {
                 <span className="ml-2 font-bold text-brand-forest">{count}</span>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {partnerContacts.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900">
+            Consultas de campings ({partnerContacts.length})
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Mensajes recibidos desde el formulario &quot;Más información&quot; de la web.
+          </p>
+          <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px] text-left text-sm">
+                <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Fecha</th>
+                    <th className="px-4 py-3 font-medium">Contacto</th>
+                    <th className="px-4 py-3 font-medium">Camping</th>
+                    <th className="px-4 py-3 font-medium">Teléfono</th>
+                    <th className="px-4 py-3 font-medium">Mensaje</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {partnerContacts.map((c) => (
+                    <tr key={c.id} className="hover:bg-gray-50/80">
+                      <td className="px-4 py-3 align-top whitespace-nowrap text-gray-600">
+                        {format(new Date(c.createdAt), "d MMM yyyy HH:mm", {
+                          locale: es,
+                        })}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <p className="font-medium text-gray-900">{c.name}</p>
+                        <a
+                          href={`mailto:${c.email}`}
+                          className="text-xs text-brand-accent hover:underline"
+                        >
+                          {c.email}
+                        </a>
+                      </td>
+                      <td className="px-4 py-3 align-top text-gray-700">
+                        {c.campingName}
+                      </td>
+                      <td className="px-4 py-3 align-top whitespace-nowrap text-gray-700">
+                        {c.phone}
+                      </td>
+                      <td className="px-4 py-3 align-top text-gray-600">
+                        {c.message || "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       )}

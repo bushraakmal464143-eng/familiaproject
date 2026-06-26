@@ -3,8 +3,8 @@ import AuthForm from "@/components/portal/AuthForm";
 export default function CuentaLoginPage() {
   return (
     <AuthForm
-      title="Panel del cliente"
-      subtitle="Contrata ofertas, paga online y consulta tus reservas."
+      title="Iniciar sesión"
+      subtitle="Accede con tu cuenta de cliente o con tus credenciales de administración."
       apiPath="/api/cuenta/login"
       registerPath="/signup"
       registerLabel="Crear cuenta"

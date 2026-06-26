@@ -23,3 +23,8 @@ export async function savePartnerContact(
   await writeJson("partner-contacts.json", existing);
   return record;
 }
+
+export async function getPartnerContacts(): Promise<PartnerContactInquiry[]> {
+  const contacts = await readJson<PartnerContactInquiry[]>("partner-contacts.json", []);
+  return contacts.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}

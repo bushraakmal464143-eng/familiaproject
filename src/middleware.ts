@@ -63,13 +63,15 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/admin")) {
     const token = request.cookies.get(ADMIN_COOKIE)?.value;
     if (pathname === "/admin/login") {
+      const login = new URL("/cuenta/login", request.url);
+      login.searchParams.set("from", "/admin");
       if (await verifyHmacToken(token)) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
-      return NextResponse.next();
+      return NextResponse.redirect(login);
     }
     if (!(await verifyHmacToken(token))) {
-      return redirectToLogin(request, "/admin/login", pathname);
+      return redirectToLogin(request, "/cuenta/login", pathname);
     }
     return NextResponse.next();
   }

@@ -6,6 +6,7 @@ import OfferGalleryUpload from "@/components/admin/OfferGalleryUpload";
 import OfferAccommodationsEditor, {
   validateOfferAccommodations,
 } from "@/components/admin/OfferAccommodationsEditor";
+import MapLocationPicker from "@/components/admin/MapLocationPicker";
 import { MAX_OFFER_IMAGES } from "@/lib/image-upload-limits";
 import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
 import type { OfferCategory } from "@/lib/offers";
@@ -83,6 +84,12 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
     offer?.accommodationLinkText ?? "Ver alojamiento →"
   );
   const [mapLabel, setMapLabel] = useState(offer?.mapLabel ?? "");
+  const [mapLat, setMapLat] = useState(
+    offer?.mapLat != null ? String(offer.mapLat) : ""
+  );
+  const [mapLng, setMapLng] = useState(
+    offer?.mapLng != null ? String(offer.mapLng) : ""
+  );
   const [campingId, setCampingId] = useState(
     offer?.campingId ?? campings[0]?.id ?? ""
   );
@@ -134,6 +141,32 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
       return;
     }
 
+    const parsedMapLat = mapLat.trim() ? Number(mapLat) : undefined;
+    const parsedMapLng = mapLng.trim() ? Number(mapLng) : undefined;
+    if (mapLat.trim() && !Number.isFinite(parsedMapLat)) {
+      setSaving(false);
+      setError("La latitud del mapa no es válida.");
+      return;
+    }
+    if (mapLng.trim() && !Number.isFinite(parsedMapLng)) {
+      setSaving(false);
+      setError("La longitud del mapa no es válida.");
+      return;
+    }
+    if (
+      (parsedMapLat != null && (parsedMapLat < -90 || parsedMapLat > 90)) ||
+      (parsedMapLng != null && (parsedMapLng < -180 || parsedMapLng > 180))
+    ) {
+      setSaving(false);
+      setError("Las coordenadas del mapa están fuera de rango.");
+      return;
+    }
+    if ((parsedMapLat == null) !== (parsedMapLng == null)) {
+      setSaving(false);
+      setError("Indica latitud y longitud, o deja ambas vacías.");
+      return;
+    }
+
     const sanitizedAccommodations = sanitizeOfferAccommodations(accommodations, {
       priceFrom: Number(priceFrom) || 0,
       image: mainImage,
@@ -160,6 +193,8 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
       accommodationLinkText: accommodationLinkText.trim() || undefined,
       accommodations: sanitizedAccommodations,
       mapLabel: mapLabel.trim() || undefined,
+      mapLat: parsedMapLat,
+      mapLng: parsedMapLng,
       campingId,
       category,
       status,
@@ -372,14 +407,23 @@ export default function OfferForm({ offer, mode, campings }: OfferFormProps) {
             defaultPrice={Number(priceFrom) || 0}
           />
         </div>
-        <div className="sm:col-span-2">
-          <label className={labelClass}>Texto sección mapa (opcional)</label>
-          <input
-            className={inputClass}
-            value={mapLabel}
-            onChange={(e) => setMapLabel(e.target.value)}
-            placeholder="Ólvega / Dirección / Zona…"
-          />
+        <div className="sm:col-span-2 rounded-xl border border-gray-200 bg-gray-50/60 p-5">
+          <h2 className="text-base font-bold text-gray-900">Ubicación en el mapa</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Busca el lugar como en Google Maps y selecciónalo de la lista.
+          </p>
+          <div className="mt-4">
+            <MapLocationPicker
+              mapLabel={mapLabel}
+              mapLat={mapLat}
+              mapLng={mapLng}
+              location={location}
+              region={region}
+              onMapLabelChange={setMapLabel}
+              onMapLatChange={setMapLat}
+              onMapLngChange={setMapLng}
+            />
+          </div>
         </div>
         <div>
           <label className={labelClass}>Régimen / comidas</label>

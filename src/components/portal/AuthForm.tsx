@@ -93,7 +93,11 @@ function AuthFormInner({
         return;
       }
 
-      router.push(from);
+      const data = (await res.json()) as { redirect?: string };
+      const destination =
+        data.redirect ??
+        (from.startsWith("/admin") ? "/admin" : from);
+      router.push(destination);
       router.refresh();
     } catch {
       setError(

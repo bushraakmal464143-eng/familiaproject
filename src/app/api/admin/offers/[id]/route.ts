@@ -3,6 +3,7 @@ import { deleteOffer, getOfferById, upsertOffer } from "@/lib/offers-store";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
 import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
+import { parseMapCoordinate } from "@/lib/offer-map";
 import type { OfferRecord } from "@/lib/types";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -61,6 +62,15 @@ export async function PUT(request: Request, context: RouteContext) {
       ? sanitizeOfferAccommodations(body.accommodations, { priceFrom, image })
       : current.accommodations;
 
+  const mapLat =
+    body.mapLat !== undefined
+      ? parseMapCoordinate(body.mapLat, "lat")
+      : current.mapLat;
+  const mapLng =
+    body.mapLng !== undefined
+      ? parseMapCoordinate(body.mapLng, "lng")
+      : current.mapLng;
+
   const offer: OfferRecord = {
     ...current,
     ...body,
@@ -74,6 +84,12 @@ export async function PUT(request: Request, context: RouteContext) {
     nightsOptions: nightsOptions ?? current.nightsOptions,
     countdownProgress: countdownProgress ?? current.countdownProgress,
     accommodations,
+    mapLabel:
+      body.mapLabel !== undefined
+        ? body.mapLabel?.trim() || undefined
+        : current.mapLabel,
+    mapLat,
+    mapLng,
     featured:
       body.featured !== undefined ? Boolean(body.featured) : current.featured,
   };

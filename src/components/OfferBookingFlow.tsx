@@ -306,3 +306,29 @@ export function OfferBookingCheckoutSection({
     />
   );
 }
+
+export function AccommodationScrollLink({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { step } = useOfferBooking();
+
+  function handleClick() {
+    const targetId =
+      step === "dates" ? "offer-booking-panel" : "booking-flow";
+    document
+      .getElementById(targetId)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className="text-sm font-medium text-brand-accent transition hover:text-orange-700 hover:underline"
+    >
+      {children}
+    </button>
+  );
+}

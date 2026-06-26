@@ -61,10 +61,16 @@ export default function PhotoManager({ initialPhotos }: PhotoManagerProps) {
       </label>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((url) => (
           <div key={url} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-            <Image src={url} alt="" fill className="object-cover" sizes="300px" />
+            <Image
+              src={url}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
             <button
               type="button"
               onClick={() => removePhoto(url)}

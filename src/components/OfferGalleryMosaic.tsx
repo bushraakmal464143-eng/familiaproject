@@ -53,11 +53,11 @@ export default function OfferGalleryMosaic({ title, images }: OfferGalleryMosaic
   return (
     <>
       <div className="overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
-        <div className="grid gap-2 md:grid-cols-12">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-12 md:grid-rows-3 md:h-[420px] lg:h-[480px]">
           <button
             type="button"
             onClick={() => openAt(0)}
-            className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-7 md:aspect-[16/11]"
+            className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-7 md:row-span-2 md:aspect-auto md:h-full md:min-h-0"
             aria-label="Ver fotos"
           >
             <Image
@@ -65,78 +65,76 @@ export default function OfferGalleryMosaic({ title, images }: OfferGalleryMosaic
               alt={title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 60vw"
+              sizes="(max-width: 768px) 100vw, 58vw"
               priority
             />
           </button>
 
-          <div className="grid gap-2 md:col-span-5">
-            <button
-              type="button"
-              onClick={() => openAt(1)}
-              className="relative aspect-[16/10] overflow-hidden bg-gray-100"
-              aria-label="Ver fotos"
-            >
-              <Image
-                src={preview[1]}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 40vw"
-              />
-            </button>
-            <button
-              type="button"
-              onClick={() => openAt(2)}
-              className="relative aspect-[16/10] overflow-hidden bg-gray-100"
-              aria-label="Ver fotos"
-            >
-              <Image
-                src={preview[2]}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 40vw"
-              />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => openAt(1)}
+            className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-5 md:col-start-8 md:row-start-1 md:aspect-auto md:h-full md:min-h-0"
+            aria-label="Ver fotos"
+          >
+            <Image
+              src={preview[1]}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 42vw"
+            />
+          </button>
 
-          <div className="grid gap-2 md:col-span-12 md:grid-cols-12">
-            <button
-              type="button"
-              onClick={() => openAt(3)}
-              className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-6"
-              aria-label="Ver fotos"
-            >
-              <Image
-                src={preview[3]}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 40vw"
-              />
-            </button>
-            <button
-              type="button"
-              onClick={() => openAt(4)}
-              className="group relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-6"
-              aria-label="Ver más fotos"
-            >
-              <Image
-                src={preview[4]}
-                alt=""
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 768px) 100vw, 40vw"
-              />
-              <div className="absolute inset-0 bg-black/15 transition group-hover:bg-black/25" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-900 shadow backdrop-blur">
-                  Ver {total} fotos
-                </span>
-              </div>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => openAt(2)}
+            className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-5 md:col-start-8 md:row-start-2 md:aspect-auto md:h-full md:min-h-0"
+            aria-label="Ver fotos"
+          >
+            <Image
+              src={preview[2]}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 42vw"
+            />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openAt(3)}
+            className="relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-7 md:row-start-3 md:aspect-auto md:h-full md:min-h-0"
+            aria-label="Ver fotos"
+          >
+            <Image
+              src={preview[3]}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 58vw"
+            />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openAt(4)}
+            className="group relative aspect-[16/10] overflow-hidden bg-gray-100 md:col-span-5 md:col-start-8 md:row-start-3 md:aspect-auto md:h-full md:min-h-0"
+            aria-label="Ver más fotos"
+          >
+            <Image
+              src={preview[4]}
+              alt=""
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 42vw"
+            />
+            <div className="absolute inset-0 bg-black/15 transition group-hover:bg-black/25" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-900 shadow backdrop-blur">
+                Ver {total} fotos
+              </span>
+            </div>
+          </button>
         </div>
       </div>
 

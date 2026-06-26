@@ -8,6 +8,7 @@ import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { MAX_GALLERY_IMAGES } from "@/lib/image-upload-limits";
 import { cleanSubtitle } from "@/lib/clean-offer-text";
 import { sanitizeOfferAccommodations } from "@/lib/offer-accommodation-units";
+import { parseMapCoordinate } from "@/lib/offer-map";
 import type { OfferRecord } from "@/lib/types";
 
 async function requireAdmin() {
@@ -82,6 +83,8 @@ export async function POST(request: Request) {
     accommodationLinkText: body.accommodationLinkText?.trim() || undefined,
     accommodations,
     mapLabel: body.mapLabel?.trim() || undefined,
+    mapLat: parseMapCoordinate(body.mapLat, "lat"),
+    mapLng: parseMapCoordinate(body.mapLng, "lng"),
     category: body.category ?? "new",
     status: body.status ?? "active",
     featured: Boolean(body.featured),

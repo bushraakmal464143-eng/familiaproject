@@ -10,7 +10,13 @@ import {
 export { ADMIN_COOKIE, createSessionToken, verifySessionToken };
 
 export function getAdminPassword(): string {
-  return process.env.ADMIN_PASSWORD ?? "admin123";
+  return process.env.ADMIN_PASSWORD ?? "Admin@$#123";
+}
+
+export function getAdminEmail(): string {
+  return (process.env.ADMIN_EMAIL ?? "adminofertas123@gmail.com")
+    .trim()
+    .toLowerCase();
 }
 
 export function verifyAdminPassword(password: string): boolean {
@@ -23,6 +29,12 @@ export function verifyAdminPassword(password: string): boolean {
   } catch {
     return false;
   }
+}
+
+export function verifyAdminCredentials(email: string, password: string): boolean {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (normalizedEmail !== getAdminEmail()) return false;
+  return verifyAdminPassword(password);
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
