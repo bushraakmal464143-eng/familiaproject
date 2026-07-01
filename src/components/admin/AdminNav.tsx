@@ -30,6 +30,23 @@ export default function AdminNav() {
     setIsMenuOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setIsMenuOpen(false);
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMenuOpen]);
+
   async function logout() {
     closeMenu();
     await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
@@ -44,13 +61,21 @@ export default function AdminNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link
           href="/admin"
-          className="shrink-0 font-bold text-brand-forest"
+          className="min-w-0 shrink font-bold text-brand-forest"
           onClick={closeMenu}
         >
-          {SITE_NAME} <span className="text-brand-accent">Admin</span>
+          <span className="block truncate text-sm sm:text-base">
+            <span className="sm:hidden">
+              <span className="text-brand-accent">Admin</span>
+            </span>
+            <span className="hidden sm:inline">
+              {SITE_NAME}{" "}
+              <span className="text-brand-accent">Admin</span>
+            </span>
+          </span>
         </Link>
 
         <nav
@@ -87,7 +112,7 @@ export default function AdminNav() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md border border-gray-200 p-2 text-gray-700 transition hover:bg-gray-50 md:hidden"
+          className="inline-flex shrink-0 items-center justify-center rounded-md border border-gray-200 p-2 text-gray-700 transition hover:bg-gray-50 md:hidden"
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={isMenuOpen}
           aria-controls="admin-mobile-menu"
@@ -99,7 +124,7 @@ export default function AdminNav() {
 
       <nav
         id="admin-mobile-menu"
-        className={`${isMenuOpen ? "flex" : "hidden"} flex-col gap-1 border-t border-gray-100 px-4 py-3 md:hidden`}
+        className={`${isMenuOpen ? "flex" : "hidden"} max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto border-t border-gray-100 px-4 py-3 md:hidden`}
         aria-label="Admin móvil"
       >
         {links.map((link) => (

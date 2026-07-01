@@ -45,7 +45,7 @@ export const defaultOffers = [
     travelDates: "Válido del 15 jun al 30 sep 2026",
     priceFrom: 32,
     image: "/offers/pirineos-2.png",
-    badge: "Chollo destacado del día",
+    badge: "Oferta destacada del día",
     countdown: "Quedan 4 días 7 horas",
     category: "bestseller",
   },
